@@ -8,9 +8,9 @@ clear all
 
 % bw=imread('/home/aysylu/Desktop/images/vid4_frame9_bw.jpg');
 % bw=imread('/home/aysylu/Desktop/images/hand.jpg');
-% bw=imread('/home/aysylu/Desktop/images/binary_batch1/000085B_b.TIF');
+bw=imread('/home/aysylu/Desktop/images/binary_batch1/000071B_b.TIF');
 % bw=imread('/home/aysylu/Desktop/images/worm_shapes_normalized/vid4_frame3_bw_female.jpg');
-bw=imread('/home/aysylu/Desktop/images/worms/vid4_frame3_bw.jpg');
+% bw=imread('/home/aysylu/Desktop/images/worms/vid4_frame6_bw.jpg');
 bw=im2bw(bw);
 bw_bound = bwmorph(bw,'remove');
 %distance transform
@@ -43,8 +43,19 @@ branches=[bx by];
 
 [ ends, bw_skel ] = simplify_skeleton( DT, bw_skel,bw_bound, branches, ends );
 
-ex=ends(:,1);
-ey=ends(:,2);
+
+%classical matlab endpoint detection
+ends=bwmorph(bw_skel,'endpoints');
+[ex, ey]=find(ends==1);
+%classical matlab branchpoint detection
+branches=bwmorph(bw_skel,'branchpoints');
+[bx, by]=find(branches==1);
+
+ends=[ex ey];
+branches=[bx by];
+
+% ex=ends(:,1);
+% ey=ends(:,2);
 
 figure
 imshow(bw_skel), hold on
@@ -115,19 +126,11 @@ while size(ends,1)>=ends_ind
         ij_ind=sub2ind(size(bw_skel_copy),I,J);
         neigh=bw_skel_copy(ij_ind);
         
-        %         neigh=[bw_skel_copy(i-1,j-1), bw_skel_copy(i-1,j), bw_skel_copy(i-1,j+1); ...
-        %             bw_skel_copy(i,j-1),   0,                   bw_skel_copy(i,j+1); ...
-        %             bw_skel_copy(i+1,j-1), bw_skel_copy(i+1,j), bw_skel_copy(i+1,j+1)];
-        %
         ij_ind=find(neigh==1);
         
         i_new=I(ij_ind);
         j_new=J(ij_ind);
         
-        
-        %         i_new=i+i_new-2;
-        %         j_new=j+j_new-2;
-        %
         isBranch = ismember([i_new,j_new],list_of_nodes,'rows');
         
         if (isempty(i_new) && isempty(j_new))

@@ -8,9 +8,9 @@ clear all
 
 % bw=imread('/home/aysylu/Desktop/images/vid4_frame9_bw.jpg');
 % bw=imread('/home/aysylu/Desktop/images/hand.jpg');
-% bw=imread('/home/aysylu/Desktop/images/binary_batch1/000085B_b.TIF');
+bw=imread('/home/aysylu/Desktop/images/binary_batch1/000071B_b.TIF');
 % bw=imread('/home/aysylu/Desktop/images/worm_shapes_normalized/vid4_frame3_bw_female.jpg');
-bw=imread('/home/aysylu/Desktop/images/worms/vid4_frame6_bw.jpg');
+% bw=imread('/home/aysylu/Desktop/images/worms/vid4_frame6_bw.jpg');
 bw=im2bw(bw);
 bw_bound = bwmorph(bw,'remove');
 %distance transform
@@ -43,13 +43,25 @@ branches=[bx by];
 
 [ ends, bw_skel ] = simplify_skeleton( DT, bw_skel,bw_bound, branches, ends );
 
-ex=ends(:,1);
-ey=ends(:,2);
+
+%classical matlab endpoint detection
+ends=bwmorph(bw_skel,'endpoints');
+[ex ey]=find(ends==1);
+%classical matlab branchpoint detection
+branches=bwmorph(bw_skel,'branchpoints');
+[bx by]=find(branches==1);
+
+
+% ex=ends(:,1);
+% ey=ends(:,2);
 
 figure
 imshow(bw_skel), hold on
 plot(ey, ex, '*g','LineWidth',5), hold on
 plot(by, bx, '*r','LineWidth',5), hold off
+
+ends=unique(ends,'rows');
+branches=unique(branches,'rows');
 
 end_is_branch=ismember(branches, ends,'rows');
 if(sum(end_is_branch)>0)
@@ -112,10 +124,6 @@ while size(ends,1)>=ends_ind
         ij_ind=sub2ind(size(bw_skel_copy),I,J);
         neigh=bw_skel_copy(ij_ind);
         
-        %         neigh=[bw_skel_copy(i-1,j-1), bw_skel_copy(i-1,j), bw_skel_copy(i-1,j+1); ...
-        %             bw_skel_copy(i,j-1),   0,                   bw_skel_copy(i,j+1); ...
-        %             bw_skel_copy(i+1,j-1), bw_skel_copy(i+1,j), bw_skel_copy(i+1,j+1)];
-        %
         ij_ind=find(neigh==1);
         
         i_new=I(ij_ind);
@@ -194,17 +202,17 @@ while size(ends,1)>=ends_ind
             ind_end =find(isEnd==0);
             ends(ind_end,:)=[];
             
-                        figure
-                        imshow(bw_skel_copy),hold on
-                        plot(tmpy,tmpx, '*g', 'LineWidth', 5),hold on
-            
+            %             figure
+            %             imshow(bw_skel_copy),hold on
+            %             plot(tmpy,tmpx, '*g', 'LineWidth', 5),hold on
+            %
             
             %%classical matlab branchpoint detection
             branches=bwmorph(bw_skel_copy,'branchpoints');
             [tmpx tmpy]=find(branches==1);
             branches=[tmpx tmpy];
             
-                        plot(tmpy,tmpx, '*r', 'LineWidth', 5),hold on
+            %             plot(tmpy,tmpx, '*r', 'LineWidth', 5),hold on
             
             if(isempty(ends) && size(branches,1)>0)
                 isEnd = ismember([branches(:,1),branches(:,2)],list_of_nodes,'rows');
