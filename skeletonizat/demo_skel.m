@@ -8,8 +8,8 @@ clear all
 
 % bw=imread('/home/aysylu/Desktop/images/vid4_frame9_bw.jpg');
 % bw=imread('/home/aysylu/Desktop/images/hand.jpg');
-% bw=imread('/home/aysylu/Desktop/images/binary_batch1/000096B_b.TIF');
-bw=imread('/home/aysylu/Desktop/images/worm_shapes_normalized/vid4_frame3_bw_female.jpg');
+bw=imread('/home/aysylu/Desktop/images/binary_batch1/000081B_b.TIF');
+% bw=imread('/home/aysylu/Desktop/images/worm_shapes_normalized/vid4_frame3_bw_female.jpg');
 % bw=imread('/home/aysylu/Desktop/images/worms/vid4_frame6_bw.jpg');
 bw=im2bw(bw);
 
@@ -39,13 +39,16 @@ clear endpoints branchpoints;
 ends=[ex ey];
 branches=[bx by];
 figure
-imshow(bw_skel)
+imshow(bw_skel),hold on
 
-[ ep, bw_skel ] = simplify_skeleton( DT, bw_skel, branches, ends );
+[ ends, bw_skel ] = simplify_skeleton( DT, bw_skel, branches, ends );
+
+ex=ends(:,1);
+ey=ends(:,2);
 
 figure
-imshow(bw_skel)
-
+imshow(bw_skel), hold on
+plot(ey, ex, '*g','LineWidth',5), hold off
 
 list_of_nodes=[ends; branches];
 adjacency_matrix = zeros(size(list_of_nodes,1),size(list_of_nodes,1));

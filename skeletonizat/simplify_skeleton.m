@@ -81,6 +81,7 @@ while size(ep,1)>=ends_ind
             node= bp(:,1)==i & bp(:,2)==j;
             ep_bp{1,node}=[ep_bp{1,node} ends_ind];
             
+            
             isBranch=1;
         end
     end
@@ -92,23 +93,59 @@ end
 ind_to_delete=[];
 ind_to_add=[];
 
-for i_b=1;size(ep_bp,2)
+for i_b=1:size(ep_bp,2)
     
-    if(size(ep_bp{i_b},2)>2)
+    if(size(ep_bp{i_b},2)>=2)
         ends=[ep(ep_bp{i_b},1) ep(ep_bp{i_b},2)];
         e_ind = find_ep4bp( bp(i_b,:), DT(bp(i_b,1),bp(i_b,2)), ends);
         
         if(size(e_ind,2)==2)
-            ind_to_delete=[ind_to_delete; e_ind];
-            new_end_x=(ends(e_ind(1,1),1)+ends(e_ind(1,2),1))/2;
-            new_end_y=(ends(e_ind(1,1),2)+ends(e_ind(1,2),2))/2;
+            ind_to_delete=[ind_to_delete ep_bp{i_b}];
+            new_end_x=round((ends(e_ind(1,1),1)+ends(e_ind(1,2),1))/2);
+            new_end_y=round((ends(e_ind(1,1),2)+ends(e_ind(1,2),2))/2);
             ind_to_add=[ind_to_add; new_end_x new_end_y];
             
+            plot(new_end_y,new_end_x,'*y', 'LineWidth',5),hold on
             
-            if(bp(i_b,1)~=new_end_x)
-                k=(bp(i_b,2)-new_end_y)/(bp(i_b,1)-new_end_x);
+            % Ax+By+C=0
+            % A=y2-y1
+            % B=x2-x1
+            % C=x1y2 - x2y1
+            
+            if (bp(i_b,1)==new_end_x)
+                new_y=min(bp(i_b,2),new_end_y):max(bp(i_b,2),new_end_y);
+                new_x=repmat(new_end_x,[1,size(new_y,2)]);
+            elseif(bp(i_b,2)==new_end_y)
+                new_x=min(bp(i_b,1),new_end_x):max(bp(i_b,1),new_end_x);
+                new_y=repmat(new_end_y,[1,size(new_x,2)]);
+            else
+                A=bp(i_b,2)-new_end_y;
+                B=bp(i_b,1)-new_end_x;
                 
+                if(A>B)
+                    if(bp(i_b,2)<new_end_y)
+                        new_y = bp(i_b,2):new_end_y;
+                    else
+                        new_y = new_end_y:bp(i_b,2); 
+                    end
+                
+                    new_x=new_end_x+(B/A)*(new_y-new_end_y);
+                    
+                else
+                    if(bp(i_b,1)<new_end_x)
+                        new_x = bp(i_b,1):new_end_x;
+                    else
+                        new_x = new_end_x:bp(i_b,1); 
+                    end
+                
+                    new_y=new_end_y+(A/B)*(new_x-new_end_x);
+                end
             end
+            
+            [new_x new_y]=bresenham(new_x(1,1), new_y(1,1), new_x(1,size(new_x,2)), new_y(1,size(new_y,2))); %we need to rasterize line such that no gaps will be presented
+        
+            indices=sub2ind(size(bw),new_x,new_y);
+            bw(indices)=1;
             
         end
     end
