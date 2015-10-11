@@ -5,7 +5,7 @@ ind=[];
 
 for p=1:size(endpoints,1)
     ed=pdist2(bp,[endpoints(p,1),endpoints(p,2)]);
-    if (ed<=dt+3)
+    if (ed<=dt*sqrt(2))
         ind=[ind p];
     end
 end

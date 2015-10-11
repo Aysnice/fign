@@ -7,8 +7,8 @@ clear all
 % bw=imread('C:\Users\aysylu\Desktop\DATA\vital brains\notSmooth_cortex_scaled_2D-Annotation43_C.png');
 
 % bw=imread('/home/aysylu/Desktop/images/vid4_frame9_bw.jpg');
-% bw=imread('/home/aysylu/Desktop/images/hand.jpg');
-bw=imread('/home/aysylu/Desktop/images/binary_batch1/000071B_b.TIF');
+bw=imread('/home/aysylu/Desktop/images/rects.png');
+% bw=imread('/home/aysylu/Desktop/images/binary_batch1/000071B_b.TIF');
 % bw=imread('/home/aysylu/Desktop/images/worm_shapes_normalized/vid4_frame3_bw_female.jpg');
 % bw=imread('/home/aysylu/Desktop/images/worms/vid4_frame6_bw.jpg');
 bw=im2bw(bw);
@@ -38,8 +38,8 @@ clear endpoints branchpoints;
 
 ends=[ex ey];
 branches=[bx by];
-% figure
-% imshow(bw_skel),hold on
+figure
+imshow(bw_skel),hold on
 
 [ ends, bw_skel ] = simplify_skeleton( DT, bw_skel,bw_bound, branches, ends );
 
