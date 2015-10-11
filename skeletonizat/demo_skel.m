@@ -8,9 +8,9 @@ clear all
 
 % bw=imread('/home/aysylu/Desktop/images/vid4_frame9_bw.jpg');
 % bw=imread('/home/aysylu/Desktop/images/hand.jpg');
-bw=imread('/home/aysylu/Desktop/images/binary_batch1/000081B_b.TIF');
+% bw=imread('/home/aysylu/Desktop/images/binary_batch1/000081B_b.TIF');
 % bw=imread('/home/aysylu/Desktop/images/worm_shapes_normalized/vid4_frame3_bw_female.jpg');
-% bw=imread('/home/aysylu/Desktop/images/worms/vid4_frame6_bw.jpg');
+bw=imread('/home/aysylu/Desktop/images/worms/vid4_frame6_bw.jpg');
 bw=im2bw(bw);
 
 %distance transform
