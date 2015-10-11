@@ -1,12 +1,15 @@
-function [ ep, bw_skel ] = simplify_skeleton( DT, bw_skel, bw_bound, bp, ep )
+function [ ep, bw_skel_o ] = simplify_skeleton( DT, bw_skel_o, bw_bound, bp, ep )
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
+
 ep_bp=cell(1,size(bp,1));
+ep_paths=cell(1,size(ep,1));
 
 isBranch=0;
 ends_ind=1;
 
+bw_skel=bw_skel_o;
 
 while size(ep,1)>=ends_ind
     
@@ -15,6 +18,7 @@ while size(ep,1)>=ends_ind
     
     while (isBranch~=1)
         %TODO: when i=1, or j=1, or i=size, or y=size
+        ep_paths{1,ends_ind}=[ep_paths{1,ends_ind}; [i,j]];
         bw_skel(i,j)=0;
         
         % check border values for i and j
@@ -90,6 +94,8 @@ while size(ep,1)>=ends_ind
     
 end
 
+clear isBranch ends_ind node i j I J i_new j_new ij_ind bw_skel
+
 ind_to_delete=[];
 ind_to_add=[];
 
@@ -101,23 +107,37 @@ for i_b=1:size(ep_bp,2)
         
         if(size(e_ind,2)==2)
             ind_to_delete=[ind_to_delete ep_bp{i_b}];
+            
+            for iii=1:size(ep_paths{1,ep_bp{i_b}(1,1)})
+                iix=ep_paths{1,e_ind(1,1)}(iii,1);
+                iiy=ep_paths{1,ep_bp{i_b}(1,1)}(iii,2);
+                bw_skel_o(iix,iiy)=0;
+            end
+            
+            for iii=1:size(ep_paths{1,ep_bp{i_b}(1,2)})
+                iix=ep_paths{1,ep_bp{i_b}(1,2)}(iii,1);
+                iiy=ep_paths{1,ep_bp{i_b}(1,2)}(iii,2);
+                bw_skel_o(iix,iiy)=0;
+            end
+            
+            ep_paths(1,ep_bp{i_b})={0};
+            
             new_end_x=round((ends(e_ind(1,1),1)+ends(e_ind(1,2),1))/2);
             new_end_y=round((ends(e_ind(1,1),2)+ends(e_ind(1,2),2))/2);
-            ind_to_add=[ind_to_add; new_end_x new_end_y];
             
-            plot(new_end_y,new_end_x,'*y', 'LineWidth',5),hold on
+%             plot(new_end_y,new_end_x,'*y', 'LineWidth',5),hold on
 
-            [new_x, new_y] = line_from_2p( bp(i_b,1), bp(i_b,2), new_end_x, new_end_y, bw_skel);
+            [new_x, new_y] = line_from_2p( bp(i_b,1), bp(i_b,2), new_end_x, new_end_y, bw_skel_o);
             [new_x, new_y] = bresenham(new_x(1,1), new_y(1,1), new_x(1,size(new_x,2)), new_y(1,size(new_y,2))); %we need to rasterize line such that no gaps will be presented
         
-            indices=sub2ind(size(bw_skel),new_x,new_y);
-            bw_res=bw_skel;
+            indices=sub2ind(size(bw_skel_o),new_x,new_y);
+            bw_res=bw_skel_o;
             bw_res(indices)=1;
             
-            bw_res = immultiply(bw_skel,bw_bound);
+            bw_res = immultiply(bw_res,bw_bound);
             inters_ind=find(bw_res==1);
         
-            [inters_x inters_y]=ind2sub(size(bw),inters_ind);
+            [inters_x, inters_y]=ind2sub(size(bw_skel_o),inters_ind);
         
             inters_sub=[inters_x inters_y];
             dist=zeros(1,size(inters_sub,1));
@@ -129,7 +149,10 @@ for i_b=1:size(ep_bp,2)
             real_int=find(dist==min(dist));
             [new_x, new_y] = bresenham(inters_x(real_int), inters_y(real_int), bp(i_b,1), bp(i_b,2)); %we need to rasterize line such that no gaps will be presented
         
+            indices=sub2ind(size(bw_skel_o),new_x,new_y);
+            bw_skel_o(indices)=1;
             
+            ind_to_add=[ind_to_add; inters_x(real_int), inters_y(real_int)];
         end
     end
 end
