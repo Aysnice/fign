@@ -8,11 +8,11 @@ clear all
 
 % bw=imread('/home/aysylu/Desktop/images/vid4_frame9_bw.jpg');
 % bw=imread('/home/aysylu/Desktop/images/hand.jpg');
-% bw=imread('/home/aysylu/Desktop/images/binary_batch1/000081B_b.TIF');
+bw=imread('/home/aysylu/Desktop/images/binary_batch1/000085B_b.TIF');
 % bw=imread('/home/aysylu/Desktop/images/worm_shapes_normalized/vid4_frame3_bw_female.jpg');
-bw=imread('/home/aysylu/Desktop/images/worms/vid4_frame6_bw.jpg');
+% bw=imread('/home/aysylu/Desktop/images/worms/vid4_frame6_bw.jpg');
 bw=im2bw(bw);
-
+bw_bound = bwmorph(bw,'remove');
 %distance transform
 
 DT = bwdist(~bw,'euclidean');
@@ -38,17 +38,19 @@ clear endpoints branchpoints;
 
 ends=[ex ey];
 branches=[bx by];
-figure
-imshow(bw_skel),hold on
+% figure
+% imshow(bw_skel),hold on
 
-[ ends, bw_skel ] = simplify_skeleton( DT, bw_skel, branches, ends );
+[ ends, bw_skel ] = simplify_skeleton( DT, bw_skel,bw_bound, branches, ends );
 
 ex=ends(:,1);
 ey=ends(:,2);
 
 figure
-imshow(bw_skel), hold on
-plot(ey, ex, '*g','LineWidth',5), hold off
+imshow(bw_bound), hold on
+plot(ey, ex, '*g','LineWidth',5), hold on
+plot(by, bx, '*r','LineWidth',5), hold off
+
 
 list_of_nodes=[ends; branches];
 adjacency_matrix = zeros(size(list_of_nodes,1),size(list_of_nodes,1));
@@ -319,7 +321,7 @@ clear ii ColOrd m n ms ColRow X Y Col
 ellipse_level=[];
 for ms=1:size(main_stamm_paths,2)
     y_axis=1:size(latitude{ms},2);
-    DT = smooth(latitude{ms},0.15,'lowess'),
+    DT = smooth(latitude{ms},0.15,'lowess');
     
     [ local_min_ind, local_max_ind, pseudo_local_maxima, pseudo_local_minima] = find_local_extremum( DT );
 

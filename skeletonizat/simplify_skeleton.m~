@@ -1,4 +1,4 @@
-function [ ep, bw ] = simplify_skeleton( DT, bw_skel, bw, bp, ep )
+function [ ep, bw_skel ] = simplify_skeleton( DT, bw_skel, bw_bound, bp, ep )
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -106,61 +106,29 @@ for i_b=1:size(ep_bp,2)
             ind_to_add=[ind_to_add; new_end_x new_end_y];
             
             plot(new_end_y,new_end_x,'*y', 'LineWidth',5),hold on
-            
-            % Ax+By+C=0
-            % A=y2-y1
-            % B=x2-x1
-            % C=x1y2 - x2y1
-%             
-%             if (bp(i_b,1)==new_end_x)
-%                 if(new_end_x-1 < size(bw_skel,1)-new_end_x)
-%                     new_y=1:bp(i_b,2);
-%                 else
-%                     new_y=bp(i_b,2):size(bw_skel,1);
-%                 end
-%                                
-%                 new_x=repmat(new_end_x,[1,size(new_y,2)]);
-%                 
-%             elseif(bp(i_b,2)==new_end_y)
-%                 
-%                 if(new_end_y-1 < size(bw_skel,2)-new_end_y)
-%                     new_x=1:bp(i_b,1);
-%                 else
-%                     new_x=bp(i_b,1):size(bw_skel,2);
-%                 end
-%                               
-%                 new_y=repmat(new_end_y,[1,size(new_x,2)]);
-%             else
-%                 A=bp(i_b,2)-new_end_y;
-%                 B=bp(i_b,1)-new_end_x;
-%                 
-%                 if(A>B)
-%                     if(bp(i_b,2)<new_end_y)
-%                         new_y = bp(i_b,2):size(bw_skel,1);
-%                     else
-%                         new_y = 1:bp(i_b,2); 
-%                     end
-%                 
-%                     new_x=new_end_x+(B/A)*(new_y-new_end_y);
-%                     
-%                 else
-%                     if(bp(i_b,1)<new_end_x)
-%                         new_x = bp(i_b,1):size(bw_skel,2);
-%                     else
-%                         new_x = 1:bp(i_b,1); 
-%                     end
-%                 
-%                     new_y=new_end_y+(A/B)*(new_x-new_end_x);
-%                 end
-%             end
-%             
-            [new_x, new_y] = line_from_2p( 1, y1, x2, y2,bw)
-            [new_x new_y]=bresenham(new_x(1,1), new_y(1,1), new_x(1,size(new_x,2)), new_y(1,size(new_y,2))); %we need to rasterize line such that no gaps will be presented
+
+            [new_x, new_y] = line_from_2p( bp(i_b,1), bp(i_b,2), new_end_x, new_end_y, bw_skel);
+            [new_x, new_y] = bresenham(new_x(1,1), new_y(1,1), new_x(1,size(new_x,2)), new_y(1,size(new_y,2))); %we need to rasterize line such that no gaps will be presented
         
             indices=sub2ind(size(bw_skel),new_x,new_y);
-            bw_skel(indices)=1;
+            bw_res=bw_skel;
+            bw_res(indices)=1;
             
-            
+            bw_res = immultiply(bw_skel,bw_bound);
+            inters_ind=find(bw_res==1);
+        
+            [inters_x inters_y]=ind2sub(size(bw),inters_ind);
+        
+            inters_sub=[inters_x inters_y];
+            dist=zeros(1,size(inters_sub,1));
+        
+            for ii=1:size(inters_sub,1)
+                dist(ii)=pdist2([bp(i_b,1), bp(i_b,2)],[ inters_sub(ii,1) inters_sub(ii,2)]);
+            end
+        
+            real_int=find(dist==min(dist));
+            [new_x, new_y] = bresenham(inters_x(real_int), inters_y(real_int), bp(i_b,1), bp(i_b,2)); %we need to rasterize line such that no gaps will be presented
+        
             
         end
     end
