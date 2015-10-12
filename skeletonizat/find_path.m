@@ -5,7 +5,7 @@ tmp_maxim=0;
 tmp_max_ind=0;
 new_paths=[];
 
-for e=1:size(ends,1)
+for e=1:size(ends,2)
     s=ends(e);
     N = size(adjacency_matrix,1);
     visited=zeros(1,N);

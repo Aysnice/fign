@@ -7,9 +7,9 @@ clear all
 % bw=imread('C:\Users\aysylu\Desktop\DATA\vital brains\notSmooth_cortex_scaled_2D-Annotation43_C.png');
 
 % bw=imread('/home/aysylu/Desktop/images/rects.png');
-% % bw=imread('/home/aysylu/Desktop/images/binary_batch1/000072B_b.TIF');
+bw=imread('/home/aysylu/Desktop/images/binary_batch1/000085B_b.TIF');
 % bw=imread('/home/aysylu/Desktop/images/worm_shapes_normalized/vid4_frame3_bw_female.jpg');
-bw=imread('/home/aysylu/Desktop/images/worms/vid4_frame8_bw.jpg');
+% bw=imread('/home/aysylu/Desktop/images/worms/vid4_frame8_bw.jpg');
 bw=im2bw(bw);
 bw_bound = bwmorph(bw,'remove');
 %distance transform
@@ -185,17 +185,17 @@ while size(ends,1)>=ends_ind
             ind_end =find(isEnd==0);
             ends(ind_end,:)=[];
             
-            %             figure
-            %             imshow(bw_skel_copy),hold on
-            %             plot(tmpy,tmpx, '*g', 'LineWidth', 5),hold on
-            %
+                        figure
+                        imshow(bw_skel_copy),hold on
+                        plot(tmpy,tmpx, '*g', 'LineWidth', 5),hold on
+            
             
             %%classical matlab branchpoint detection
             branches=bwmorph(bw_skel_copy,'branchpoints');
             [tmpx tmpy]=find(branches==1);
             branches=[tmpx tmpy];
             
-            %             plot(tmpy,tmpx, '*r', 'LineWidth', 5),hold on
+                        plot(tmpy,tmpx, '*r', 'LineWidth', 5),hold on
             
             if(isempty(ends) && size(branches,1)>0)
                 isEnd = ismember([branches(:,1),branches(:,2)],list_of_nodes,'rows');
@@ -332,13 +332,13 @@ for ms=1:size(main_stamm_paths,2)
     tmp=repmat(ms,[size(params,1),1]);
     params(:,5)=tmp;
     ellipse_level=[ellipse_level; params];
-    
-    figure
-    plot(y_axis, DT,'LineWidth',3),hold on
-    
-    plot(round(local_max_ind),DT(round(local_max_ind)),'r*'), hold on
-    plot(round(local_min_ind),DT(round(local_min_ind)),'g*'), hold on
-    plot(pseudo_local_maxima,DT(round(pseudo_local_maxima)),'b*'), hold on
+%     
+%     figure
+%     plot(y_axis, DT,'LineWidth',3),hold on
+%     
+%     plot(round(local_max_ind),DT(round(local_max_ind)),'r*'), hold on
+%     plot(round(local_min_ind),DT(round(local_min_ind)),'g*'), hold on
+%     plot(pseudo_local_maxima,DT(round(pseudo_local_maxima)),'b*'), hold on
     
 end
 
