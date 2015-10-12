@@ -6,8 +6,8 @@ clear all
 % bw=imread('C:\Users\aysylu\Desktop\worms\vid4_frame9_bw.jpg');
 % bw=imread('C:\Users\aysylu\Desktop\DATA\vital brains\notSmooth_cortex_scaled_2D-Annotation43_C.png');
 
-% bw=imread('/home/aysylu/Desktop/images/rects.png');
-bw=imread('/home/aysylu/Desktop/images/binary_batch1/000085B_b.TIF');
+bw=imread('/home/aysylu/Desktop/images/rects.png');
+% bw=imread('/home/aysylu/Desktop/images/binary_batch1/000085B_b.TIF');
 % bw=imread('/home/aysylu/Desktop/images/worm_shapes_normalized/vid4_frame3_bw_female.jpg');
 % bw=imread('/home/aysylu/Desktop/images/worms/vid4_frame8_bw.jpg');
 bw=im2bw(bw);
@@ -235,7 +235,7 @@ while size(ends_indices,2)>0
         tmp_adjacency_matrix(tmp_main_stamm(ii+1),tmp_main_stamm(ii))=0;
     end
     
-    if size(tmp_main_stamm,2)>2
+    if size(tmp_main_stamm,2)>1
         main_stamm{end+1}=tmp_main_stamm;
     end
 end
@@ -333,12 +333,12 @@ for ms=1:size(main_stamm_paths,2)
     params(:,5)=tmp;
     ellipse_level=[ellipse_level; params];
 %     
-%     figure
-%     plot(y_axis, DT,'LineWidth',3),hold on
-%     
-%     plot(round(local_max_ind),DT(round(local_max_ind)),'r*'), hold on
-%     plot(round(local_min_ind),DT(round(local_min_ind)),'g*'), hold on
-%     plot(pseudo_local_maxima,DT(round(pseudo_local_maxima)),'b*'), hold on
+    figure
+    plot(y_axis, DT,'LineWidth',3),hold on
+    
+    plot(round(local_max_ind),DT(round(local_max_ind)),'r*'), hold on
+    plot(round(local_min_ind),DT(round(local_min_ind)),'g*'), hold on
+    plot(pseudo_local_maxima,DT(round(pseudo_local_maxima)),'b*'), hold on
     
 end
 
