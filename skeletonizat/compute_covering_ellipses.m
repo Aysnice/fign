@@ -49,8 +49,8 @@ for i=1:1:size(local_min_ind,1)-1
     
     if(step~=0)
         for w=local_min_ind(i):step:local_min_ind(ind)
-            a=DT(round(w));
-            b=2;
+            b=DT(round(w));
+            a=2;
 %             
             x_=round(w);
             y_=1;%msp(round(w),2);
