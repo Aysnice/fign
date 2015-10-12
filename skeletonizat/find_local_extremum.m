@@ -23,6 +23,7 @@ if(~isempty(borders))
     local_min_ind(local_min_ind<borders(1) | local_min_ind>borders(2))=[];
     local_min_ind=[borders(1), local_min_ind', borders(2)]';
 end
+
 %---------------------------------------------------------------------
 %-check when there are two local maxima one by one``------------------
 %---------------------------------------------------------------------
@@ -56,7 +57,6 @@ median_value = median(absdifdifDTy); % median deviation of values
 mean_value = mean(difdifDTy); % mean deviation of values
 max_value=max(absdifdifDTy); % max deviation of values
 
-%TODO median_value=0, tochka peregiba?
 if(max_value/median_value>8)
     
     %find the peaks which are higher than the half of the highest peak

@@ -22,10 +22,7 @@ for i=1:1:size(local_min_ind,1)-1
         
         for tt=1:size(ind_1,1)
             if(ind_1(tt)==1)
-                continue;
-            else
                 ind_2 = [ind_2, find(tmp_max(ind_1(tt)-1,1)>tmp_min(i-1))];
-            end
         end
         
         if(sum(ind_2)>0)
@@ -52,7 +49,7 @@ for i=1:1:size(local_min_ind,1)-1
             a=DT(round(w));
             b=2;
 %             
-            x_=round(w);
+            x_=round(w),1;
             y_=1;%msp(round(w),2);
 %             ind_o=find(DT(:,round(local_min_ind(i)))==max(DT(:,round(local_min_ind(i)))));
 %             ind_o=median(ind_o);

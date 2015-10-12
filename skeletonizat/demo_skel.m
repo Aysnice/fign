@@ -8,9 +8,9 @@ clear all
 
 % bw=imread('/home/aysylu/Desktop/images/vid4_frame9_bw.jpg');
 bw=imread('/home/aysylu/Desktop/images/rects.png');
-% bw=imread('/home/aysylu/Desktop/images/binary_batch1/000071B_b.TIF');
+% bw=imread('/home/aysylu/Desktop/images/binary_batch1/000081B_b.TIF');
 % bw=imread('/home/aysylu/Desktop/images/worm_shapes_normalized/vid4_frame3_bw_female.jpg');
-% bw=imread('/home/aysylu/Desktop/images/worms/vid4_frame6_bw.jpg');
+% bw=imread('/home/aysylu/Desktop/images/worms/vid4_frame3_bw.jpg');
 bw=im2bw(bw);
 bw_bound = bwmorph(bw,'remove');
 %distance transform
@@ -38,11 +38,10 @@ clear endpoints branchpoints;
 
 ends=[ex ey];
 branches=[bx by];
-figure
-imshow(bw_skel),hold on
+% figure
+% imshow(bw_skel),hold on
 
 [ ends, bw_skel ] = simplify_skeleton( DT, bw_skel,bw_bound, branches, ends );
-
 
 %classical matlab endpoint detection
 ends=bwmorph(bw_skel,'endpoints');
@@ -57,10 +56,10 @@ branches=[bx by];
 % ex=ends(:,1);
 % ey=ends(:,2);
 
-figure
-imshow(bw_skel), hold on
-plot(ey, ex, '*g','LineWidth',5), hold on
-plot(by, bx, '*r','LineWidth',5), hold off
+% figure
+% imshow(bw_skel), hold on
+% plot(ey, ex, '*g','LineWidth',5), hold on
+% plot(by, bx, '*r','LineWidth',5), hold off
 
 ends=unique(ends,'rows');
 branches=unique(branches,'rows');
@@ -93,7 +92,6 @@ while size(ends,1)>=ends_ind
     path_array{end}=path_array{end}.add_point([i,j]);
     
     while (isBranch~=1)
-        %TODO: when i=1, or j=1, or i=size, or y=size
         bw_skel_copy(i,j)=0;
         
         % check border values for i and j
@@ -140,12 +138,6 @@ while size(ends,1)>=ends_ind
             isBranch=0;
             
             if(size(i_new,1)>1)
-                %                 dif_box=[abs(i_new-i),abs(j_new-j)];
-                %                 dif_box=sum(dif_box,2);
-                %                 ii=find(dif_box==min(dif_box));
-                %                 i=i_new(ii(1));
-                %                 j=j_new(ii(1));
-                %                 clear dif_box ii
                 i=i_new(1);
                 j=j_new(1);
             else
@@ -159,12 +151,6 @@ while size(ends,1)>=ends_ind
             ind=find(isBranch==1);
             
             if(size(ind,1)>1)
-                %                 dif_box=[abs(i_new(ind)-i),abs(j_new(ind)-j)];
-                %                 dif_box=sum(dif_box,2);
-                %                 ii=find(dif_box==min(dif_box));
-                %                 i=i_new(ind(ii(1)));
-                %                 j=j_new(ind(ii(1)));
-                %                 clear dif_box ii
                 i=i_new(ind(1));
                 j=j_new(ind(1));
             else
@@ -250,7 +236,7 @@ while size(ends_indices,2)>0
         tmp_adjacency_matrix(tmp_main_stamm(ii+1),tmp_main_stamm(ii))=0;
     end
     
-    if size(tmp_main_stamm,2)>2
+    if size(tmp_main_stamm,2)>1
         main_stamm{end+1}=tmp_main_stamm;
     end
 end
@@ -343,17 +329,17 @@ for ms=1:size(main_stamm_paths,2)
     local_max_ind = sort(local_max_ind);
     local_min_ind = sort(local_min_ind);
     
-    params=compute_covering_ellipses( local_max_ind,local_min_ind, DT');
+    params=compute_covering_ellipses( local_max_ind,local_min_ind, DT',main_stamm_paths{ms});
     tmp=repmat(ms,[size(params,1),1]);
     params(:,5)=tmp;
     ellipse_level=[ellipse_level; params];
     
-    figure
-    plot(y_axis, DT,'LineWidth',3),hold on
-    
-    plot(round(local_max_ind),DT(round(local_max_ind)),'r*'), hold on
-    plot(round(local_min_ind),DT(round(local_min_ind)),'g*'), hold on
-    plot(pseudo_local_maxima,DT(round(pseudo_local_maxima)),'b*'), hold on
+%     figure
+%     plot(y_axis, DT,'LineWidth',3),hold on
+%     
+%     plot(round(local_max_ind),DT(round(local_max_ind)),'r*'), hold on
+%     plot(round(local_min_ind),DT(round(local_min_ind)),'g*'), hold on
+%     plot(pseudo_local_maxima,DT(round(pseudo_local_maxima)),'b*'), hold on
     
 end
 

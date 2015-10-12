@@ -1,6 +1,5 @@
 function [ ep, bw_skel_o ] = simplify_skeleton( DT, bw_skel_o, bw_bound, bp, ep )
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
+%transform double endpoints at the end to a single endpoint 
 
 
 ep_bp=cell(1,size(bp,1));
@@ -125,7 +124,7 @@ for i_b=1:size(ep_bp,2)
             new_end_x=round((ends(e_ind(1,1),1)+ends(e_ind(1,2),1))/2);
             new_end_y=round((ends(e_ind(1,1),2)+ends(e_ind(1,2),2))/2);
             
-             plot(new_end_y,new_end_x,'*y', 'LineWidth',5),hold on
+%              plot(new_end_y,new_end_x,'*y', 'LineWidth',5),hold on
 
             [new_x, new_y] = line_from_2p( bp(i_b,1), bp(i_b,2), new_end_x, new_end_y, bw_skel_o);
             [new_x, new_y] = bresenham(new_x(1,1), new_y(1,1), new_x(1,size(new_x,2)), new_y(1,size(new_y,2))); %we need to rasterize line such that no gaps will be presented
@@ -136,14 +135,14 @@ for i_b=1:size(ep_bp,2)
             
             bw_res = immultiply(bw_res,bw_bound);
             
-            figure
-            imshow(bw_bound), hold on
+%             figure
+%             imshow(bw_bound), hold on
             
             inters_ind=find(bw_res==1);
         
             [inters_x, inters_y]=ind2sub(size(bw_skel_o),inters_ind);
         
-            plot(new_y, new_x,'*b', 'LineWidth',5)
+%             plot(new_y, new_x,'*b', 'LineWidth',5)
             
             inters_sub=[inters_x inters_y];
             dist=zeros(1,size(inters_sub,1));
@@ -167,24 +166,3 @@ ep(ind_to_delete,:)=[];
 ep=cat(1,ep,ind_to_add);
 
 end
-
-
-
-%
-% ind_to_delete=[];
-% ind_to_add=[];
-%
-% % deleting branching endings
-% for i_b=1:1:size(branches,1)
-%
-%     e_ind = find_ep4bp( branches(i_b,:), DT(branches(i_b,1),branches(i_b,2)), ends )
-%     if(size(e_ind,2)==2)
-%         ind_to_delete=[ind_to_delete, e_ind];
-%         new_end_x=(ends(e_ind(1,1),1)+ends(e_ind(1,2),1))/2;
-%         new_end_y=(ends(e_ind(1,1),2)+ends(e_ind(1,2),2))/2;
-%         ind_to_add=[ind_to_add; new_end_x new_end_y];
-%         plot(new_end_y, new_end_x, '*y','LineWidth',5), hold on
-%     end
-% end
-
-
