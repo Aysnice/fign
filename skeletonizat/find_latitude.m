@@ -105,9 +105,11 @@ for ss=i_s:i_e
         
         %
         bw_res = immultiply(bw,bw_n);
-        inters_ind=find(bw_res==1);
-        
-        [inters_x inters_y]=ind2sub(size(bw),inters_ind);
+        inters_ind=bwmorph(bw_res,'endpoints');
+        [inters_x inters_y]=find(inters_ind==1);
+%         inters_ind=find(bw_res==1);
+%         
+%         [inters_x inters_y]=ind2sub(size(bw),inters_ind);
         plot (inters_y, inters_x, '*y','LineWidth',2), hold on
         inters_sub=[inters_x inters_y];
         dist=zeros(1,size(inters_sub,1));

@@ -112,7 +112,7 @@ function btn_start_Callback(hObject, eventdata, handles)
 % set(hf);%, 'Position', [100 100 360 640]);
 % vidtofr(video,hf,p);
 number_vertices = str2double(get(handles.text_vertices, 'String'));
-hf = handles.axes3;
+hf = handles;
 global bw
 apply_algorithm( bw, hf, number_vertices );
 
