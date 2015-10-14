@@ -6,7 +6,8 @@ clear all
 % bw=imread('C:\Users\aysylu\Desktop\worms\vid4_frame9_bw.jpg');
 % bw=imread('C:\Users\aysylu\Desktop\DATA\vital brains\notSmooth_cortex_scaled_2D-Annotation43_C.png');
 
-bw=imread('/home/aysylu/Desktop/images/horse.png');
+%bw=imread('/home/aysylu/Desktop/images/horse.png');
+bw=imread('/home/aysylu/Desktop/images/root004_8.png');
 % bw=imread('/home/aysylu/Desktop/images/binary_batch1/000065B_b.TIF');
 % bw=imread('/home/aysylu/Desktop/images/worm_shapes_normalized/vid4_frame3_bw_female.jpg');
 % bw=imread('/home/aysylu/Desktop/images/worms/vid4_frame9_bw.jpg');
@@ -28,10 +29,10 @@ endpoints=bwmorph(bw_skel,'endpoints');
 branchpoints=bwmorph(bw_skel,'branchpoints');
 [bx by]=find(branchpoints==1);
 
-% figure
-% imshow(bw_skel), hold on
-% plot(ey, ex, '*g','LineWidth',5), hold on
-% plot(by, bx, '*r','LineWidth',5), hold off
+figure
+imshow(bw_skel), hold on
+plot(ey, ex, '*g','LineWidth',5), hold on
+plot(by, bx, '*r','LineWidth',5), hold off
 
 clear endpoints branchpoints;
 
@@ -87,6 +88,7 @@ while size(ends,1)>=ends_ind
     
     node_1=find(list_of_nodes(:,1)==i & list_of_nodes(:,2)==j);
     p=path_segment(node_1);
+        
     path_array{end+1}=p;
     path_array{end}=path_array{end}.add_point([i,j]);
     
@@ -204,7 +206,7 @@ while size(ends,1)>=ends_ind
                 ind_end=find(isEnd==1);
                 if(~isempty(ind_end))
                     ind_end_min=find(ind_end(:,1)==min(ind_end(:,1)));
-                    ends=[branches(ind_end_min,1) branches(ind_end_min,2)];
+                    ends=[branches(ind_end(ind_end_min),1) branches(ind_end(ind_end_min),2)];
                 end
                 
             end

@@ -118,7 +118,7 @@ for i_b=1:size(ep_bp,2)
                 iiy=ep_paths{1,ep_bp{i_b}(1,2)}(iii,2);
                 bw_skel_o(iix,iiy)=0;
             end
-            
+%             
 %             figure
 %             imshow(bw_skel_o),hold on
             
@@ -132,7 +132,7 @@ for i_b=1:size(ep_bp,2)
             [new_x, new_y] = line_from_2p( bp(i_b,1), bp(i_b,2), new_end_x, new_end_y, bw_skel_o);
             [new_x, new_y] = bresenham(new_x(1,1), new_y(1,1), new_x(1,size(new_x,2)), new_y(1,size(new_y,2))); %we need to rasterize line such that no gaps will be presented
 
-            new_x=[new_x; new_x-1; new_x]; % for the case when line goes through diagonal pixels without crossing. we make it thicker
+            new_x=[new_x; new_x-1; new_x+1]; % for the case when line goes through diagonal pixels without crossing. we make it thicker
             new_y=[new_y; new_y; new_y];
             ind_neg=find(new_x<1);
             new_x(ind_neg)=[]; new_y(ind_neg)=[]; new_y=round(new_y);
@@ -153,7 +153,7 @@ for i_b=1:size(ep_bp,2)
         
             [inters_x, inters_y]=ind2sub(size(bw_skel_o),inters_ind);
         
-            %plot(inters_y, inters_x,'*b', 'LineWidth',5)
+%             plot(inters_y, inters_x,'*b', 'LineWidth',5)
             
             inters_sub=[inters_x inters_y];
             dist=zeros(1,size(inters_sub,1));
@@ -161,8 +161,8 @@ for i_b=1:size(ep_bp,2)
             for ii=1:size(inters_sub,1)
                 dist(ii)=pdist2([bp(i_b,1), bp(i_b,2)],[ inters_sub(ii,1) inters_sub(ii,2)]);
             end
-        
-            real_int=median(find(dist==min(dist)));
+        %%%TODO: maybe a better algo than taking the very first??
+            real_int=(find(dist==min(dist),1,'first'));
             [new_x, new_y] = bresenham(inters_x(real_int), inters_y(real_int), bp(i_b,1), bp(i_b,2)); %we need to rasterize line such that no gaps will be presented
         
             indices=sub2ind(size(bw_skel_o),new_x,new_y);
