@@ -171,8 +171,8 @@ if(max_value/median_value>8)
     %-check the picks in second derivative--------------------------------
     %---------------------------------------------------------------------
     
-%     pseudo_local_minima=find_pseudo_local_minima(pseudo_local_maxima,local_max_ind,local_min_ind,'border');%'intersection'
-%     pseudo_local_maxima=pseudo_local_maxima';
+    pseudo_local_minima=find_pseudo_local_minima(pseudo_local_maxima,local_max_ind,local_min_ind,'border');%'intersection'
+    pseudo_local_maxima=pseudo_local_maxima';
 %     local_min_ind = [local_min_ind; pseudo_local_minima];
 %     local_max_ind = [local_max_ind; pseudo_local_maxima'];
      

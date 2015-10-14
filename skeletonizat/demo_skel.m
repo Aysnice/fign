@@ -6,13 +6,13 @@ clear all
 % bw=imread('C:\Users\aysylu\Desktop\worms\vid4_frame9_bw.jpg');
 % bw=imread('C:\Users\aysylu\Desktop\DATA\vital brains\notSmooth_cortex_scaled_2D-Annotation43_C.png');
 
-% bw=imread('/home/aysylu/Desktop/images/horse.png');
-% bw=imread('/home/aysylu/Desktop/images/binary_batch1/000085B_b.TIF');
+bw=imread('/home/aysylu/Desktop/images/horse.png');
+% bw=imread('/home/aysylu/Desktop/images/binary_batch1/000065B_b.TIF');
 % bw=imread('/home/aysylu/Desktop/images/worm_shapes_normalized/vid4_frame3_bw_female.jpg');
 % bw=imread('/home/aysylu/Desktop/images/worms/vid4_frame9_bw.jpg');
 bw=im2bw(bw);
 bw_bound = bwmorph(bw,'remove');
-%distance transform
+%distance transformin
 
 DT = bwdist(~bw,'euclidean');
 % figure
@@ -28,10 +28,10 @@ endpoints=bwmorph(bw_skel,'endpoints');
 branchpoints=bwmorph(bw_skel,'branchpoints');
 [bx by]=find(branchpoints==1);
 
-figure
-imshow(bw_skel), hold on
-plot(ey, ex, '*g','LineWidth',5), hold on
-plot(by, bx, '*r','LineWidth',5), hold off
+% figure
+% imshow(bw_skel), hold on
+% plot(ey, ex, '*g','LineWidth',5), hold on
+% plot(by, bx, '*r','LineWidth',5), hold off
 
 clear endpoints branchpoints;
 
@@ -304,9 +304,9 @@ for ms=1:size(main_stamm_paths,2)
         % Get the color
         Col = ColOrd(ColRow,:);
     
- figure
-imshow(bw_skel), hold on
-   X=main_stamm_paths{ms}(:,1);
+figure
+imshow(bw_skel), hold on 
+    X=main_stamm_paths{ms}(:,1);
     Y=main_stamm_paths{ms}(:,2);
     %
     
@@ -324,12 +324,12 @@ clear ii ColOrd m n ms ColRow X Y Col
 ellipse_level=[];
 for ms=1:size(main_stamm_paths,2)
     y_axis=1:size(latitude{ms},2);
-    DT = smooth(latitude{ms},0.15,'lowess');
+    DT = smooth(latitude{ms},0.1,'lowess');
     
     [ local_min_ind, local_max_ind, pseudo_local_maxima, pseudo_local_minima] = find_local_extremum( DT );
     
-    %     local_min_ind = [local_min_ind; pseudo_local_minima];
-    %     local_max_ind = [local_max_ind; pseudo_local_maxima];
+%         local_min_ind = [local_min_ind; pseudo_local_minima'];
+%         local_max_ind = [local_max_ind; pseudo_local_maxima];
     
     local_max_ind = sort(local_max_ind);
     local_min_ind = sort(local_min_ind);

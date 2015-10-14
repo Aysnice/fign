@@ -137,6 +137,9 @@ for i_b=1:size(ep_bp,2)
             ind_neg=find(new_x<1);
             new_x(ind_neg)=[]; new_y(ind_neg)=[]; new_y=round(new_y);
             
+            ind_pos=find(new_x>size(bw_skel_o,1));
+            new_x(ind_pos)=[]; new_y(ind_pos)=[]; new_y=round(new_y);
+            
 %             plot(new_y,new_x,'*g', 'LineWidth',5),hold on
             
             

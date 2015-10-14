@@ -99,8 +99,8 @@ for ss=i_s:i_e
         ind_neg=find(n_x<1);
         n_x(ind_neg)=[]; n_y(ind_neg)=[]; n_y=round(n_y);
         
-        ind_pos=find(n_x>size(bw,1));
-        n_x(ind_pos)=[]; n_y(ind_pos)=[]; n_y=round(n_y);
+        ind_neg=find(n_x<1);
+        n_x(ind_neg)=[]; n_y(ind_neg)=[]; n_y=round(n_y);
         
         indices=sub2ind(size(bw),n_x,n_y);
         bw_n(indices)=1;

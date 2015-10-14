@@ -7,12 +7,12 @@ clear all
 % bw=imread('C:\Users\aysylu\Desktop\DATA\vital brains\notSmooth_cortex_scaled_2D-Annotation43_C.png');
 
 % bw=imread('/home/aysylu/Desktop/images/horse.png');
-% bw=imread('/home/aysylu/Desktop/images/binary_batch1/000085B_b.TIF');
+bw=imread('/home/aysylu/Desktop/images/binary_batch1/000065B_b.TIF');
 % bw=imread('/home/aysylu/Desktop/images/worm_shapes_normalized/vid4_frame3_bw_female.jpg');
-bw=imread('/home/aysylu/Desktop/images/worms/vid4_frame8_bw.jpg');
+% bw=imread('/home/aysylu/Desktop/images/worms/vid4_frame9_bw.jpg');
 bw=im2bw(bw);
 bw_bound = bwmorph(bw,'remove');
-%distance transform
+%distance transformin
 
 DT = bwdist(~bw,'euclidean');
 % figure
@@ -26,12 +26,12 @@ endpoints=bwmorph(bw_skel,'endpoints');
 [ex ey]=find(endpoints==1);
 %classical matlab branchpoint detection
 branchpoints=bwmorph(bw_skel,'branchpoints');
-[bx by]=find(branchpoints==1);
+[bx by]=find(branchpoints==1);ays
 
-figure
-imshow(bw_skel), hold on
-plot(ey, ex, '*g','LineWidth',5), hold on
-plot(by, bx, '*r','LineWidth',5), hold off
+% figure
+% imshow(bw_skel), hold on
+% plot(ey, ex, '*g','LineWidth',5), hold on
+% plot(by, bx, '*r','LineWidth',5), hold off
 
 clear endpoints branchpoints;
 
@@ -197,7 +197,7 @@ while size(ends,1)>=ends_ind
             [tmpx tmpy]=find(branches==1);
             branches=[tmpx tmpy];
             
-                        plot(tmpy,tmpx, '*r', 'LineWidth', 5),hold on
+%                         plot(tmpy,tmpx, '*r', 'LineWidth', 5),hold on
             
             if(isempty(ends) && size(branches,1)>0)
                 isEnd = ismember([branches(:,1),branches(:,2)],list_of_nodes,'rows');
@@ -304,9 +304,9 @@ for ms=1:size(main_stamm_paths,2)
         % Get the color
         Col = ColOrd(ColRow,:);
     
- figure
-imshow(bw_skel), hold on
-   X=main_stamm_paths{ms}(:,1);
+figure
+imshow(bw_skel), hold on 
+    X=main_stamm_paths{ms}(:,1);
     Y=main_stamm_paths{ms}(:,2);
     %
     
@@ -324,12 +324,12 @@ clear ii ColOrd m n ms ColRow X Y Col
 ellipse_level=[];
 for ms=1:size(main_stamm_paths,2)
     y_axis=1:size(latitude{ms},2);
-    DT = smooth(latitude{ms},0.15,'lowess');
+    DT = smooth(latitude{ms},0.1,'lowess');
     
     [ local_min_ind, local_max_ind, pseudo_local_maxima, pseudo_local_minima] = find_local_extremum( DT );
     
-    %     local_min_ind = [local_min_ind; pseudo_local_minima];
-    %     local_max_ind = [local_max_ind; pseudo_local_maxima];
+        local_min_ind = [local_min_ind; pseudo_local_minima'];
+        local_max_ind = [local_max_ind; pseudo_local_maxima];
     
     local_max_ind = sort(local_max_ind);
     local_min_ind = sort(local_min_ind);
@@ -339,12 +339,12 @@ for ms=1:size(main_stamm_paths,2)
     params(:,5)=tmp;
     ellipse_level=[ellipse_level; params];
 %     
-%     figure
-%     plot(y_axis, DT,'LineWidth',3),hold on
-%     
-%     plot(round(local_max_ind),DT(round(local_max_ind)),'r*'), hold on
-%     plot(round(local_min_ind),DT(round(local_min_ind)),'g*'), hold on
-%     plot(pseudo_local_maxima,DT(round(pseudo_local_maxima)),'b*'), hold on
+    figure
+    plot(y_axis, DT,'LineWidth',3),hold on
+    
+    plot(round(local_max_ind),DT(round(local_max_ind)),'r*'), hold on
+    plot(round(local_min_ind),DT(round(local_min_ind)),'g*'), hold on
+    plot(pseudo_local_maxima,DT(round(pseudo_local_maxima)),'b*'), hold on
 %     
 end
 
