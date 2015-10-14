@@ -7,7 +7,7 @@ clear all
 % bw=imread('C:\Users\aysylu\Desktop\DATA\vital brains\notSmooth_cortex_scaled_2D-Annotation43_C.png');
 
 % bw=imread('/home/aysylu/Desktop/images/rects.png');
-bw=imread('/home/aysylu/Desktop/images/dataset1/root019_20.png');
+bw=imread('/home/aysylu/Desktop/images/dataset1/root005_20.png');
 % bw=imread('/home/aysylu/Desktop/images/binary_batch1/000065B_b.TIF');
 % bw=imread('/home/aysylu/Desktop/images/worm_shapes_normalized/vid4_frame3_bw_female.jpg');
 % bw=imread('/home/aysylu/Desktop/images/worms/vid4_frame9_bw.jpg');
@@ -175,6 +175,7 @@ while size(ends,1)>=ends_ind
         adjacency_matrix(node_2,node_1)=length;
     else
         path_array{end}={};
+        path_array=path_array(~cellfun('isempty',path_array));
     end
     
     ends_ind=ends_ind+1;
@@ -187,12 +188,11 @@ while size(ends,1)>=ends_ind
             ends=[tmpx tmpy];
             
             branches=bwmorph(bw_skel_copy,'branchpoints');
-                [tmpx tmpy]=find(branches==1);
-                branches=[tmpx tmpy];
+            [tmpx tmpy]=find(branches==1);
+            branches=[tmpx tmpy];
             
             isEnd = ismember([ends(:,1),ends(:,2)],list_of_nodes,'rows');
             ind_end_e =find(isEnd==1);
-            
                 
             if(~isempty(ind_end_e))
                 ends=ends(ind_end_e,:);
@@ -205,17 +205,18 @@ while size(ends,1)>=ends_ind
                     ind_end_min=find(ind_end_b(:,1)==min(ind_end_b(:,1)));
                     ends=[branches(ind_end_b(ind_end_min),1) branches(ind_end_b(ind_end_min),2)];
                 else
+                    list_of_nodes=[list_of_nodes; ends];
                     new_x=path_array{end}.path_x(1,size(path_array{end}.path_x,2));
                     new_y=path_array{end}.path_y(1,size(path_array{end}.path_x,2));
                     
-                    ends=[new_x,new_y];
+                    ends=[ends;[new_x,new_y]];
                 end
             end
 %             
-            figure
-            imshow(bw_skel_copy),hold on
-            plot(branches(:,2),branches(:,1), '*r', 'LineWidth', 5),hold on
-            plot(ends(:,2),ends(:,1), '*g', 'LineWidth', 5),hold on
+%             figure
+%             imshow(bw_skel_copy),hold on
+%             plot(branches(:,2),branches(:,1), '*r', 'LineWidth', 5),hold on
+%             plot(ends(:,2),ends(:,1), '*g', 'LineWidth', 5),hold on
 %             
             ends_ind=1;
             clear tmpx tmpy isEnd ind_end
@@ -313,13 +314,13 @@ for ms=1:size(main_stamm_paths,2)
         % Get the color
         Col = ColOrd(ColRow,:);
     
-figure
-imshow(bw_skel), hold on 
+% figure
+% imshow(bw_skel), hold on 
     X=main_stamm_paths{ms}(:,1);
     Y=main_stamm_paths{ms}(:,2);
     %
     
-    plot(Y,X,'Color',Col,'LineWidth',3);
+%     plot(Y,X,'Color',Col,'LineWidth',3);
          ii=ii+1;
     
     bw_bound = bwmorph(bw,'remove');
@@ -435,3 +436,57 @@ for ie=1:size(ellipse_level,1)
 end
 
 
+
+
+
+
+
+
+
+
+
+% % % % % 
+% % % % %     if (size(ends,1)<ends_ind)
+% % % % %         if (sum(sum(bw_skel_copy))>0)
+% % % % %             %matlab classics for endpoint and branchpoint detection
+% % % % %             ends=bwmorph(bw_skel_copy,'endpoints');
+% % % % %             [tmpx tmpy]=find(ends==1);
+% % % % %             ends=[tmpx tmpy];
+% % % % %             
+% % % % %             branches=bwmorph(bw_skel_copy,'branchpoints');
+% % % % %                 [tmpx tmpy]=find(branches==1);
+% % % % %                 branches=[tmpx tmpy];
+% % % % %             
+% % % % %             isEnd = ismember([ends(:,1),ends(:,2)],list_of_nodes,'rows');
+% % % % %             ind_end_e =find(isEnd==1);
+% % % % %             
+% % % % %                 
+% % % % %             if(~isempty(ind_end_e))
+% % % % %                 ends=ends(ind_end_e,:);
+% % % % %             else
+% % % % %                 
+% % % % %                 isEnd = ismember([branches(:,1),branches(:,2)],list_of_nodes,'rows');
+% % % % %                 ind_end_b=find(isEnd==1);
+% % % % %                 
+% % % % %                 if(~isempty(ind_end_b))
+% % % % %                     ind_end_min=find(ind_end_b(:,1)==min(ind_end_b(:,1)));
+% % % % %                     ends=[branches(ind_end_b(ind_end_min),1) branches(ind_end_b(ind_end_min),2)];
+% % % % %                 else
+% % % % %                     new_x=path_array{end}.path_x(1,size(path_array{end}.path_x,2));
+% % % % %                     new_y=path_array{end}.path_y(1,size(path_array{end}.path_x,2));
+% % % % %                     
+% % % % %                     ends=[new_x,new_y];
+% % % % %                 end
+% % % % %             end
+% % % % % %             
+% % % % %             figure
+% % % % %             imshow(bw_skel_copy),hold on
+% % % % %             plot(branches(:,2),branches(:,1), '*r', 'LineWidth', 5),hold on
+% % % % %             plot(ends(:,2),ends(:,1), '*g', 'LineWidth', 5),hold on
+% % % % % %             
+% % % % %             ends_ind=1;
+% % % % %             clear tmpx tmpy isEnd ind_end
+% % % % %         end
+% % % % %     end
+% % % % %     
+% % % % % end
