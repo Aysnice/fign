@@ -8,7 +8,7 @@ function [ new_x, new_y ] = line_from_2p( x1, y1, x2, y2,bw)
 % C=x1y2 - x2y1
 
 if (x1==x2)
-    if(y2-1 < size(bw,2)-y2)
+    if(y2 < y1)
         new_y=1:y1;
     else
         new_y=y1:size(bw,2);
@@ -18,7 +18,7 @@ if (x1==x2)
     
 elseif(y1==y2)
     
-    if(x2-1 < size(bw,1)-x2)
+    if(x2 < x1)
         new_x=1:x1;
     else
         new_x=x1:size(bw,1);

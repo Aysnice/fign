@@ -12,7 +12,11 @@ for i=1:1:size(local_min_ind,1)-1
     step=0;
     ind_2=[];
     
-    if(i==1)
+    if(size(tmp_max,1)==0)
+      ind=i+1;
+      step=1;
+    
+    elseif(i==1)
         if(tmp_max(1,1)>tmp_min(i+1))
             ind=i+1;
             step=1;

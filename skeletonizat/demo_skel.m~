@@ -9,7 +9,7 @@ clear all
 % bw=imread('/home/aysylu/Desktop/images/horse.png');
 % bw=imread('/home/aysylu/Desktop/images/binary_batch1/000085B_b.TIF');
 % bw=imread('/home/aysylu/Desktop/images/worm_shapes_normalized/vid4_frame3_bw_female.jpg');
-% bw=imread('/home/aysylu/Desktop/images/worms/vid4_frame9_bw.jpg');
+bw=imread('/home/aysylu/Desktop/images/worms/vid4_frame8_bw.jpg');
 bw=im2bw(bw);
 bw_bound = bwmorph(bw,'remove');
 %distance transform
@@ -197,7 +197,7 @@ while size(ends,1)>=ends_ind
             [tmpx tmpy]=find(branches==1);
             branches=[tmpx tmpy];
             
-%                         plot(tmpy,tmpx, '*r', 'LineWidth', 5),hold on
+                        plot(tmpy,tmpx, '*r', 'LineWidth', 5),hold on
             
             if(isempty(ends) && size(branches,1)>0)
                 isEnd = ismember([branches(:,1),branches(:,2)],list_of_nodes,'rows');
@@ -238,7 +238,7 @@ while size(ends_indices,2)>0
         tmp_adjacency_matrix(tmp_main_stamm(ii+1),tmp_main_stamm(ii))=0;
     end
     
-    if size(tmp_main_stamm,2)>2
+    if size(tmp_main_stamm,2)>1
         main_stamm{end+1}=tmp_main_stamm;
     end
 end

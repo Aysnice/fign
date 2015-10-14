@@ -11,9 +11,9 @@ i_step=(nb-1)/2;
 latitude=zeros(1,s);
 normal=zeros(2,s);
 
-figure
-imshow(bw)
-hold on
+% figure
+% imshow(bw)
+% hold on
 
 for ss=i_s:i_e
     
@@ -81,10 +81,10 @@ for ss=i_s:i_e
             n_y=t_y(ss_i,1)+(B/A)*(t_x(ss_i,1)-n_x);
         end
         
-        plot (t_y, t_x, 'g','LineWidth',2), hold on
-        plot (n_y, n_x, 'b','LineWidth',1), hold on
-        plot (s_y, s_x, '*r','LineWidth',2), hold on
-        
+%         plot (t_y, t_x, 'g','LineWidth',2), hold on
+%         plot (n_y, n_x, 'b','LineWidth',1), hold on
+%         plot (s_y, s_x, '*r','LineWidth',2), hold on
+%         
         ind_neg=find(n_y<1);
         n_x(ind_neg)=[]; n_y(ind_neg)=[]; n_y=round(n_y);
         
@@ -110,7 +110,7 @@ for ss=i_s:i_e
 %         inters_ind=find(bw_res==1);
 %         
 %         [inters_x inters_y]=ind2sub(size(bw),inters_ind);
-        plot (inters_y, inters_x, '*y','LineWidth',2), hold on
+%         plot (inters_y, inters_x, '*y','LineWidth',2), hold on
         inters_sub=[inters_x inters_y];
         dist=zeros(1,size(inters_sub,1));
         
