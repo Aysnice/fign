@@ -6,8 +6,8 @@ clear all
 % bw=imread('C:\Users\aysylu\Desktop\worms\vid4_frame9_bw.jpg');
 % bw=imread('C:\Users\aysylu\Desktop\DATA\vital brains\notSmooth_cortex_scaled_2D-Annotation43_C.png');
 
-%bw=imread('/home/aysylu/Desktop/images/horse.png');
-bw=imread('/home/aysylu/Desktop/images/root004_8.png');
+% bw=imread('/home/aysylu/Desktop/images/rects.png');
+bw=imread('/home/aysylu/Desktop/images/dataset1/root019_20.png');
 % bw=imread('/home/aysylu/Desktop/images/binary_batch1/000065B_b.TIF');
 % bw=imread('/home/aysylu/Desktop/images/worm_shapes_normalized/vid4_frame3_bw_female.jpg');
 % bw=imread('/home/aysylu/Desktop/images/worms/vid4_frame9_bw.jpg');
@@ -181,35 +181,42 @@ while size(ends,1)>=ends_ind
     
     if (size(ends,1)<ends_ind)
         if (sum(sum(bw_skel_copy))>0)
+            %matlab classics for endpoint and branchpoint detection
             ends=bwmorph(bw_skel_copy,'endpoints');
             [tmpx tmpy]=find(ends==1);
             ends=[tmpx tmpy];
-            isEnd = ismember([ends(:,1),ends(:,2)],list_of_nodes,'rows');
-            ind_end =find(isEnd==0);
-            ends(ind_end,:)=[];
-            tmpx=ends(:,1);
-            tmpy=ends(:,2);
-%                         figure
-%                         imshow(bw_skel_copy),hold on
-%                         plot(tmpy,tmpx, '*g', 'LineWidth', 5),hold on
-%             
             
-            %%classical matlab branchpoint detection
             branches=bwmorph(bw_skel_copy,'branchpoints');
-            [tmpx tmpy]=find(branches==1);
-            branches=[tmpx tmpy];
+                [tmpx tmpy]=find(branches==1);
+                branches=[tmpx tmpy];
             
-%                         plot(tmpy,tmpx, '*r', 'LineWidth', 5),hold on
+            isEnd = ismember([ends(:,1),ends(:,2)],list_of_nodes,'rows');
+            ind_end_e =find(isEnd==1);
             
-            if(isempty(ends) && size(branches,1)>0)
-                isEnd = ismember([branches(:,1),branches(:,2)],list_of_nodes,'rows');
-                ind_end=find(isEnd==1);
-                if(~isempty(ind_end))
-                    ind_end_min=find(ind_end(:,1)==min(ind_end(:,1)));
-                    ends=[branches(ind_end(ind_end_min),1) branches(ind_end(ind_end_min),2)];
-                end
                 
+            if(~isempty(ind_end_e))
+                ends=ends(ind_end_e,:);
+            else
+                
+                isEnd = ismember([branches(:,1),branches(:,2)],list_of_nodes,'rows');
+                ind_end_b=find(isEnd==1);
+                
+                if(~isempty(ind_end_b))
+                    ind_end_min=find(ind_end_b(:,1)==min(ind_end_b(:,1)));
+                    ends=[branches(ind_end_b(ind_end_min),1) branches(ind_end_b(ind_end_min),2)];
+                else
+                    new_x=path_array{end}.path_x(1,size(path_array{end}.path_x,2));
+                    new_y=path_array{end}.path_y(1,size(path_array{end}.path_x,2));
+                    
+                    ends=[new_x,new_y];
+                end
             end
+%             
+            figure
+            imshow(bw_skel_copy),hold on
+            plot(branches(:,2),branches(:,1), '*r', 'LineWidth', 5),hold on
+            plot(ends(:,2),ends(:,1), '*g', 'LineWidth', 5),hold on
+%             
             ends_ind=1;
             clear tmpx tmpy isEnd ind_end
         end
@@ -326,7 +333,7 @@ clear ii ColOrd m n ms ColRow X Y Col
 ellipse_level=[];
 for ms=1:size(main_stamm_paths,2)
     y_axis=1:size(latitude{ms},2);
-    DT = smooth(latitude{ms},0.1,'lowess');
+    DT = smooth(latitude{ms},0.05,'lowess');
     
     [ local_min_ind, local_max_ind, pseudo_local_maxima, pseudo_local_minima] = find_local_extremum( DT );
     
