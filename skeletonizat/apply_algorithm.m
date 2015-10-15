@@ -1,23 +1,20 @@
-function res = apply_algorithm( bw, hf, number_vertices )
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
-% close all
-% clear all
-global bw
-
+function res = apply_algorithm( bw, hf, number_of_vertices )
 % bw=imread('C:\Users\aysylu\Desktop\binary_batch1\000085B_b.tif');
 % bw=imread('C:\Users\aysylu\Desktop\ellipses\horse.png');
 % bw=imread('C:\Users\aysylu\Desktop\dataset1\root004_8.png');
 % bw=imread('C:\Users\aysylu\Desktop\worms\vid4_frame9_bw.jpg');
 % bw=imread('C:\Users\aysylu\Desktop\DATA\vital brains\notSmooth_cortex_scaled_2D-Annotation43_C.png');
 
-%bw=imread('/home/aysylu/Desktop/images/rects.png');
-% bw=imread('/home/aysylu/Desktop/images/binary_batch1/000085B_b.TIF');
+% bw=imread('/home/aysylu/Desktop/images/rects.png');
+% bw=imread('/home/aysylu/Desktop/images/dataset1/root005_20.png');
+% bw=imread('/home/aysylu/Desktop/images/binary_batch1/000065B_b.TIF');
 % bw=imread('/home/aysylu/Desktop/images/worm_shapes_normalized/vid4_frame3_bw_female.jpg');
-% bw=imread('/home/aysylu/Desktop/images/worms/vid4_frame8_bw.jpg');
+% bw=imread('/home/aysylu/Desktop/images/worms/vid4_frame9_bw.jpg');
+
+global bw
 bw=im2bw(bw);
 bw_bound = bwmorph(bw,'remove');
-%distance transform
+%distance transformin
 
 DT = bwdist(~bw,'euclidean');
 % figure
@@ -57,6 +54,16 @@ branches=bwmorph(bw_skel,'branchpoints');
 ends=[ex ey];
 branches=[bx by];
 
+% ex=ends(:,1);
+% ey=ends(:,2);
+
+axes(hf.axes3)
+%figure
+imshow(bw_skel), hold on
+plot(ey, ex, '*g','LineWidth',5), hold on
+plot(by, bx, '*r','LineWidth',5), hold off
+
+
 ends=unique(ends,'rows');
 branches=unique(branches,'rows');
 
@@ -71,12 +78,6 @@ end
 list_of_nodes=[ends; branches];
 adjacency_matrix = zeros(size(list_of_nodes,1),size(list_of_nodes,1));
 
-axes(hf.axes3)
-imshow(bw_skel), hold on
-plot(ey, ex, '*g','LineWidth',5), hold on
-plot(by, bx, '*r','LineWidth',5), hold off
-
-
 bw_skel_copy=bw_skel;
 ends_ind=1;
 path_array={};
@@ -90,6 +91,7 @@ while size(ends,1)>=ends_ind
     
     node_1=find(list_of_nodes(:,1)==i & list_of_nodes(:,2)==j);
     p=path_segment(node_1);
+        
     path_array{end+1}=p;
     path_array{end}=path_array{end}.add_point([i,j]);
     
@@ -151,6 +153,7 @@ while size(ends,1)>=ends_ind
             length=length+1;
         else
             ind=find(isBranch==1);
+        
             
             if(size(ind,1)>1)
                 i=i_new(ind(1));
@@ -175,39 +178,49 @@ while size(ends,1)>=ends_ind
         adjacency_matrix(node_2,node_1)=length;
     else
         path_array{end}={};
+        path_array=path_array(~cellfun('isempty',path_array));
     end
     
     ends_ind=ends_ind+1;
     
     if (size(ends,1)<ends_ind)
         if (sum(sum(bw_skel_copy))>0)
+            %matlab classics for endpoint and branchpoint detection
             ends=bwmorph(bw_skel_copy,'endpoints');
             [tmpx tmpy]=find(ends==1);
             ends=[tmpx tmpy];
-            isEnd = ismember([ends(:,1),ends(:,2)],list_of_nodes,'rows');
-            ind_end =find(isEnd==0);
-            ends(ind_end,:)=[];
             
-                        figure
-                        imshow(bw_skel_copy),hold on
-                        plot(tmpy,tmpx, '*g', 'LineWidth', 5),hold on
-            
-            
-            %%classical matlab branchpoint detection
             branches=bwmorph(bw_skel_copy,'branchpoints');
             [tmpx tmpy]=find(branches==1);
             branches=[tmpx tmpy];
             
-                        plot(tmpy,tmpx, '*r', 'LineWidth', 5),hold on
-            
-            if(isempty(ends) && size(branches,1)>0)
-                isEnd = ismember([branches(:,1),branches(:,2)],list_of_nodes,'rows');
-                ind_end=find(isEnd==1);
-                if(~isempty(ind_end))
-                    ends=[branches(ind_end(1),1) branches(ind_end(1),2)];
-                end
+            isEnd = ismember([ends(:,1),ends(:,2)],list_of_nodes,'rows');
+            ind_end_e =find(isEnd==1);
                 
+            if(~isempty(ind_end_e))
+                ends=ends(ind_end_e,:);
+            else
+                
+                isEnd = ismember([branches(:,1),branches(:,2)],list_of_nodes,'rows');
+                ind_end_b=find(isEnd==1);
+                
+                if(~isempty(ind_end_b))
+                    ind_end_min=find(ind_end_b(:,1)==min(ind_end_b(:,1)));
+                    ends=[branches(ind_end_b(ind_end_min),1) branches(ind_end_b(ind_end_min),2)];
+                else
+                    list_of_nodes=[list_of_nodes; ends];
+                    new_x=path_array{end}.path_x(1,size(path_array{end}.path_x,2));
+                    new_y=path_array{end}.path_y(1,size(path_array{end}.path_x,2));
+                    
+                    ends=[ends;[new_x,new_y]];
+                end
             end
+%             
+%             figure
+%             imshow(bw_skel_copy),hold on
+%             plot(branches(:,2),branches(:,1), '*r', 'LineWidth', 5),hold on
+%             plot(ends(:,2),ends(:,1), '*g', 'LineWidth', 5),hold on
+%             
             ends_ind=1;
             clear tmpx tmpy isEnd ind_end
         end
@@ -238,7 +251,7 @@ while size(ends_indices,2)>0
         tmp_adjacency_matrix(tmp_main_stamm(ii+1),tmp_main_stamm(ii))=0;
     end
     
-    if size(tmp_main_stamm,2)>number_vertices
+    if size(tmp_main_stamm,2)>number_of_vertices
         main_stamm{end+1}=tmp_main_stamm;
     end
 end
@@ -280,13 +293,13 @@ end
 clear p ms path_x path_y ind_f ind_b vec vec_s vec_e s e
 
 % figure
-% imshow(bw), hold on
-% ii=1;
-% set(gca,'FontSize',24)
-% ColOrd = get(gca,'ColorOrder');
-%
-% % Determine the number of colors in the matrix
-% [m,n] = size(ColOrd);
+% imshow(bw_skel), hold on
+ii=1;
+set(gca,'FontSize',24)
+ColOrd = get(gca,'ColorOrder');
+
+% Determine the number of colors in the matrix
+[m,n] = size(ColOrd);
 %
 % hold on,
 latitude={};
@@ -295,20 +308,23 @@ nb=15;
 
 for ms=1:size(main_stamm_paths,2)
     
-    %     % Color Order Matrix
-    %     ColRow = rem(ii,m);
-    %     if ColRow == 0
-    %         ColRow = m;
-    %     end
-    %
-    %     % Get the color
-    %     Col = ColOrd(ColRow,:);
+        % Color Order Matrix
+        ColRow = rem(ii,m);
+        if ColRow == 0
+            ColRow = m;
+        end
     
+        % Get the color
+        Col = ColOrd(ColRow,:);
+    
+% figure
+% imshow(bw_skel), hold on 
     X=main_stamm_paths{ms}(:,1);
     Y=main_stamm_paths{ms}(:,2);
     %
-    %     plot(Y,X,'Color',Col,'LineWidth',3);
-    %     ii=ii+1;
+    
+%     plot(Y,X,'Color',Col,'LineWidth',3);
+         ii=ii+1;
     
     bw_bound = bwmorph(bw,'remove');
     if(size(X,1)<nb)
@@ -321,12 +337,12 @@ clear ii ColOrd m n ms ColRow X Y Col
 ellipse_level=[];
 for ms=1:size(main_stamm_paths,2)
     y_axis=1:size(latitude{ms},2);
-    DT = smooth(latitude{ms},0.15,'lowess');
+    DT = smooth(latitude{ms},0.05,'lowess');
     
     [ local_min_ind, local_max_ind, pseudo_local_maxima, pseudo_local_minima] = find_local_extremum( DT );
     
-    %     local_min_ind = [local_min_ind; pseudo_local_minima];
-    %     local_max_ind = [local_max_ind; pseudo_local_maxima];
+%         local_min_ind = [local_min_ind; pseudo_local_minima'];
+%         local_max_ind = [local_max_ind; pseudo_local_maxima];
     
     local_max_ind = sort(local_max_ind);
     local_min_ind = sort(local_min_ind);
@@ -336,18 +352,19 @@ for ms=1:size(main_stamm_paths,2)
     params(:,5)=tmp;
     ellipse_level=[ellipse_level; params];
 %     
-    figure
-    plot(y_axis, DT,'LineWidth',3),hold on
-    
-    plot(round(local_max_ind),DT(round(local_max_ind)),'r*'), hold on
-    plot(round(local_min_ind),DT(round(local_min_ind)),'g*'), hold on
-    plot(pseudo_local_maxima,DT(round(pseudo_local_maxima)),'b*'), hold on
-    
+%     figure
+%     plot(y_axis, DT,'LineWidth',3),hold on
+%     
+%     plot(round(local_max_ind),DT(round(local_max_ind)),'r*'), hold on
+%     plot(round(local_min_ind),DT(round(local_min_ind)),'g*'), hold on
+%     plot(pseudo_local_maxima,DT(round(pseudo_local_maxima)),'b*'), hold on
+%     
 end
 
 
 clear y_axis DT local_min_ind local_max_ind pseudo_local_maxima pseudo_local_minima params tmp ms
 
+%figure
 axes(hf.axes5)
 imshow(bw), hold on
 ii=1;
@@ -421,7 +438,6 @@ for ie=1:size(ellipse_level,1)
     ii=ii+1;
     
 end
-
-
+hold off
 end
 

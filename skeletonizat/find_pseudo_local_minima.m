@@ -48,10 +48,14 @@ if (strcmp(param,'border')==1)
         else
             d1=abs(pseudo_extremum(ind_p)-local_min_ind(i));
             d2=abs(pseudo_extremum(ind_p)-local_min_ind(i+1));
-            if(d1>d2)
-                pseudo_local_minima=[pseudo_local_minima; pseudo_extremum(ind_p)+d1];
-            else
-                pseudo_local_minima=[pseudo_local_minima; pseudo_extremum(ind_p)-d2];
+            
+            for j=1:1:size(ind_p,2)
+                
+                if(d1(j)>d2(j))
+                    pseudo_local_minima=[pseudo_local_minima; pseudo_extremum(ind_p(j))+d1(j)];
+                else
+                    pseudo_local_minima=[pseudo_local_minima; pseudo_extremum(ind_p(j))-d2(j)];
+                end
             end
         end
     end
@@ -79,7 +83,7 @@ elseif (strcmp(param,'intersection')==1)
                 end
                 pseudo_local_minima=[pseudo_local_minima; v];
             end
-             
+            
             if(size(delete_flag,1)>0)
                 for i=1:1:size(delete_flag)
                     pseudo_extremum(ind_p(delete_flag(i)))=[];
@@ -89,10 +93,14 @@ elseif (strcmp(param,'intersection')==1)
         else
             d1=abs(pseudo_extremum(ind_p)-local_min_ind(i));
             d2=abs(pseudo_extremum(ind_p)-local_min_ind(i+1));
-            if(d1>d2)
-                pseudo_local_minima=[pseudo_local_minima; pseudo_extremum(ind_p)+0.01];
-            else
-                pseudo_local_minima=[pseudo_local_minima; pseudo_extremum(ind_p)-0.01];
+            
+            for j=1:1:size(ind_p,2)
+                
+                if(d1(j)>d2(j))
+                    pseudo_local_minima=[pseudo_local_minima; pseudo_extremum(ind_p(j))+0.01];
+                else
+                    pseudo_local_minima=[pseudo_local_minima; pseudo_extremum(ind_p(j))-0.01];
+                end
             end
         end
     end
