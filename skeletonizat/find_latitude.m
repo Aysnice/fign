@@ -124,9 +124,13 @@ for ss=i_s:i_e
             dist=0;
         end
         
-        latitude(1,real_index)=min(dist);
-        normal(1,real_index)=A;
-        normal(2,real_index)=B;
+%         if(real_index>1 && min(dist)>latitude(1,real_index-1)*17)
+%             break;
+%         else
+            latitude(1,real_index)=min(dist);
+            normal(1,real_index)=A;
+            normal(2,real_index)=B;
+%         end
     end
     
     

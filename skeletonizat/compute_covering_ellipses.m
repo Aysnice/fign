@@ -8,18 +8,15 @@ for i=1:1:size(local_min_ind,1)-1
     ind = find((local_max_ind>local_min_ind(i) & local_max_ind<local_min_ind(i+1)));
     
     if(size(ind,1)==0)
-        
         for w=local_min_ind(i):1:local_min_ind(i+1)
             b=DT(round(w));
             a=2;
 
             x_=round(w);
-            y_=1;
+            y_=0;
             
             ellipse_level=[ellipse_level ; a b x_ y_];
         end
-        
-        
     else
         
         for j=1:1:size(ind,2)

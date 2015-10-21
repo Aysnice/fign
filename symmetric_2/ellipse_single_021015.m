@@ -3,12 +3,12 @@ close all; clear all;
 %----------------------------------------------------------
 %-------------CREATE AN ELLIPSE 70----------------------------
 %----------------------------------------------------------
-a = 100;
-c = 60;
+a = 55;
+c = 5;
 alpha = 0;%3*pi/4; %in degree
 
-bw=create_ellipse(a,c,alpha);
-%  bw=imread('C:\Users\aysylu\Desktop\ellipses\oblako.TIF');
+%bw=create_ellipse(a,c,alpha);
+% bw=imread('C:\Users\aysylu\Desktop\ellipses\circle.TIF');
 % bw=imread('C:\Users\aysylu\Desktop\DATA\binary_batch1\000097B_b.TIF');
 % bw=imread('C:\Users\aysylu\Desktop\DATA\worm_shapes_normalized\vid4_frame3_bw_female.jpg');
 % bw=imread('C:\Users\aysylu\Desktop\DATA\worm_shapes_normalized\vid4_frame3_bw_male.jpg');
@@ -17,7 +17,8 @@ bw=create_ellipse(a,c,alpha);
 % bw=imread('C:\Users\aysylu\Desktop\DATA\worm_shapes_normalized\vid4_frame8_bw_male.jpg');
 % bw=imread('C:\Users\aysylu\Desktop\DATA\worm_shapes_normalized\vid4_frame9_bw_female.jpg');
 % bw=imread('C:\Users\aysylu\Desktop\DATA\worm_shapes_normalized\vid4_frame9_bw_male2.jpg');
-% bw=imread('/home/aysylu/Desktop/ellipses/binary_batch1/000063B_b.TIF'); 
+%  bw=imread('/home/aysylu/Desktop/images/blumnot.png');
+bw=imread('/home/aysylu/Desktop/images/binary_batch1/000092B_b.TIF'); 
 bw=im2bw(bw);
 % figure 
 % imshow(bw)
@@ -31,18 +32,20 @@ clear a c alpha
 % figure
 % imshow(bw)
 
-[bw_crop, Rot, O]=crop_with_pca(bw);
+[bw_crop, Rot]=crop_with_pca(bw);
 % bw_crop=bw;
 
 %----------------------------------------------------------
 %-------------DISTANCE TRANSFORM---------------------------
 %----------------------------------------------------------
 % bw_crop=imfill(bw_crop,'holes');
-DT = bwdist(~bw_crop,'cityblock');
+DT = bwdist(~bw_crop,'euclidean');
 % 
-% figure
-% subimage(mat2gray(DT)),title('city block')
-% hold on, imcontour(DT)
+figure
+subimage(mat2gray(DT)),title('city block')
+hold on, imcontour(DT)
+
+DT = bwdist(~bw_crop,'cityblock');
 
 DTy=max(DT); %for columns
 DTx=max(DT,[],2); %for rows
@@ -79,6 +82,7 @@ plot(abs(difdifDTy)), hold on
 % axis equal
 
 [ local_min_ind, local_max_ind, pseudo_local_maxima, pseudo_local_minima] = find_local_extremum( DTy );
+[ max_ind, min_ind ] = find_positive_curvature( DTy );
 
 figure
 
@@ -110,7 +114,9 @@ set(botAxs,'PlotBoxAspectRatio', botAxsRatio)
 % axis([0 max(y_axis) -1.3 1.3])
 
 
-subplot(414), plot(abs(difdifDTy)), hold on 
+subplot(414), plot((difdifDTy)), hold on 
+plot(round(max_ind),difdifDTy(round(max_ind)),'r*'), hold on
+plot(round(min_ind),difdifDTy(round(min_ind)),'g*'), hold on
 % plot(mean_value, '-r'),%(deltadifDTy)
 % plot(median_value, '-g')%(deltadifDTy)
 botAxs = gca;
@@ -157,7 +163,7 @@ b = max(DTy);
 ellipse_level_0=[a b O_e(1) O_e(2)];
 
 % level 1 - only extrema
-ellipse_level_1=compute_covering_ellipses( local_max_ind,local_min_ind, DT  );
+ellipse_level_1=compute_covering_ellipses( local_max_ind,local_min_ind, DT );
 
 % level 2 - extrema + pseudo
 local_min_ind = [local_min_ind; pseudo_local_minima];
@@ -166,7 +172,7 @@ local_max_ind = [local_max_ind; pseudo_local_maxima];
 local_max_ind = sort(local_max_ind);
 local_min_ind = sort(local_min_ind);
 
-ellipse_level_2=compute_covering_ellipses( local_max_ind,local_min_ind, DT  );
+ellipse_level_2=compute_covering_ellipses( local_max_ind,local_min_ind, DT );
 
 % ellipse_level_0 = optimize_level( ellipse_level_0,bw_crop);
 % ellipse_level_1 = optimize_level( ellipse_level_1,bw_crop);
@@ -174,16 +180,17 @@ ellipse_level_2=compute_covering_ellipses( local_max_ind,local_min_ind, DT  );
 %----------------------------------------------------------
 %-------------COMPUTE ROMBUS EDGE--------------------------
 %----------------------------------------------------------
-% figure
-% %imshow(bw),title('Euclidean'), hold on
-% imshow(bw_crop),hold on
-% 
-% plot_ellipse_level(bw_crop, ellipse_level_0, O, O_e, 'r', 2);
-% hold on
-% 
-% plot_ellipse_level(bw_crop, ellipse_level_1, O, O_e, 'g', 2);
-% hold on
+figure
+%imshow(bw),title('Euclidean'), hold on
+imshow(bw_crop),hold on
 
-plot_ellipse_level(bw_crop, ellipse_level_2, O, O_e, 'b', 2);
+
+plot_ellipse_level(bw_crop, ellipse_level_0, O_e, 'r', 2);
+hold on
+
+plot_ellipse_level(bw_crop, ellipse_level_1, O_e, 'g', 2);
+hold on
+
+plot_ellipse_level(bw_crop, ellipse_level_2, O_e, 'b', 2);
 
 % plot(O_e(1),O_e(2), 'r*'), hold off

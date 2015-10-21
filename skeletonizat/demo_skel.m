@@ -6,8 +6,8 @@ clear all
 % bw=imread('C:\Users\aysylu\Desktop\worms\vid4_frame9_bw.jpg');
 % bw=imread('C:\Users\aysylu\Desktop\DATA\vital brains\notSmooth_cortex_scaled_2D-Annotation43_C.png');
 
-% bw=imread('/home/aysylu/Desktop/images/rects.png');
-bw=imread('/home/aysylu/Desktop/images/dataset1/root005_20.png');
+bw=imread('/home/aysylu/Desktop/images/blumnot.png');
+% bw=imread('/home/aysylu/Desktop/images/dataset1/root012_20.png');
 % bw=imread('/home/aysylu/Desktop/images/binary_batch1/000065B_b.TIF');
 % bw=imread('/home/aysylu/Desktop/images/worm_shapes_normalized/vid4_frame3_bw_female.jpg');
 % bw=imread('/home/aysylu/Desktop/images/worms/vid4_frame6_bw.jpg');
@@ -21,7 +21,7 @@ DT = bwdist(~bw,'euclidean');
 % hold on, imcontour(DT)
 
 %classical matlab skeletonization
-bw_skel = bwmorph(bw,'skel',Inf);
+bw_skel = bwmorph(bw,'thin',Inf);
 %classical matlab endpoint detection
 endpoints=bwmorph(bw_skel,'endpoints');
 [ex ey]=find(endpoints==1);
@@ -29,10 +29,10 @@ endpoints=bwmorph(bw_skel,'endpoints');
 branchpoints=bwmorph(bw_skel,'branchpoints');
 [bx by]=find(branchpoints==1);
 
-% figure
-% imshow(bw_skel), hold on
-% plot(ey, ex, '*g','LineWidth',5), hold on
-% plot(by, bx, '*r','LineWidth',5), hold off
+figure
+imshow(bw_skel), hold on
+plot(ey, ex, '*g','LineWidth',5), hold on
+plot(by, bx, '*r','LineWidth',5), hold off
 
 clear endpoints branchpoints;
 
@@ -57,11 +57,6 @@ branches=[bx by];
 % ey=ends(:,2);
 
 % axes(hf.axes3)
-figure
-imshow(bw_skel), hold on
-plot(ey, ex, '*g','LineWidth',5), hold on
-plot(by, bx, '*r','LineWidth',5), hold off
-
 
 ends=unique(ends,'rows');
 branches=unique(branches,'rows');
@@ -73,6 +68,13 @@ if(sum(end_is_branch)>0)
     bx=branches(:,1);
     by=branches(:,2);
 end
+
+
+figure
+imshow(bw_skel), hold on
+plot(ends(:,2), ends(:,1), '*g','LineWidth',5), hold on
+plot(branches(:,2), branches(:,1), '*r','LineWidth',5), hold off
+
 
 list_of_nodes=[ends; branches];
 adjacency_matrix = zeros(size(list_of_nodes,1),size(list_of_nodes,1));
@@ -215,10 +217,10 @@ while size(ends,1)>=ends_ind
                 end
             end
 %             
-%             figure
-%             imshow(bw_skel_copy),hold on
-%             plot(branches(:,2),branches(:,1), '*r', 'LineWidth', 5),hold on
-%             plot(ends(:,2),ends(:,1), '*g', 'LineWidth', 5),hold on
+            figure
+            imshow(bw_skel_copy),hold on
+            plot(branches(:,2),branches(:,1), '*r', 'LineWidth', 5),hold on
+            plot(ends(:,2),ends(:,1), '*g', 'LineWidth', 5),hold on
 %             
             ends_ind=1;
             clear tmpx tmpy isEnd ind_end
@@ -250,7 +252,7 @@ while size(ends_indices,2)>0
         tmp_adjacency_matrix(tmp_main_stamm(ii+1),tmp_main_stamm(ii))=0;
     end
     
-    if size(tmp_main_stamm,2)>2
+    if size(tmp_main_stamm,2)>1
         main_stamm{end+1}=tmp_main_stamm;
     end
 end
@@ -336,7 +338,7 @@ clear ii ColOrd m n ms ColRow X Y Col
 ellipse_level=[];
 for ms=1:size(main_stamm_paths,2)
     y_axis=1:size(latitude{ms},2);
-    DT = smooth(latitude{ms},0.2,'lowess');
+    DT = smooth(latitude{ms},0.05,'lowess');
     
     [ local_min_ind, local_max_ind, pseudo_local_maxima, pseudo_local_minima] = find_local_extremum( DT );
     
@@ -351,12 +353,12 @@ for ms=1:size(main_stamm_paths,2)
     params(:,5)=tmp;
     ellipse_level=[ellipse_level; params];
 %     
-%     figure
-%     plot(y_axis, DT,'LineWidth',3),hold on
-%     
-%     plot(round(local_max_ind),DT(round(local_max_ind)),'r*'), hold on
-%     plot(round(local_min_ind),DT(round(local_min_ind)),'g*'), hold on
-%     plot(pseudo_local_maxima,DT(round(pseudo_local_maxima)),'b*'), hold on
+    figure
+    plot(y_axis, DT,'LineWidth',3),hold on
+    
+    plot(round(local_max_ind),DT(round(local_max_ind)),'r*'), hold on
+    plot(round(local_min_ind),DT(round(local_min_ind)),'g*'), hold on
+    plot(pseudo_local_maxima,DT(round(pseudo_local_maxima)),'b*'), hold on
 %     
 end
 
