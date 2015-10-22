@@ -48,7 +48,7 @@ for i=1:1:size(local_max_ind,1)
         
         for w=local_max_ind(i):step:local_max_ind(i+1)
             b=max(DT(:, round(w)));
-            a=2;
+            a=0;
             
             ind_o=find(DT(:,round(w))==max(DT(:,round(w))) );
             ind_o=median(ind_o);
@@ -88,7 +88,7 @@ for i=1:1:size(local_max_ind,1)
         
         for w=local_max_ind(i):step:local_max_ind(i+1)
             b=max(DT(:, round(w)));
-            a=2;
+            a=0;
             
             ind_o=find(DT(:,round(w))==max(DT(:,round(w))) );
             ind_o=median(ind_o);
@@ -109,45 +109,6 @@ for i=1:1:size(local_max_ind,1)
         ellipse_level=[ellipse_level ; a b round(local_max_ind(i)) y_];
         
     end
-    
-    
-    
-    
-%     
-%     if(size(ind2,1)==0)
-%         for w=local_max_ind(i):5:local_max_ind(i+1)
-%             b=max(DT(:, round(w)));
-%             a=2;
-%             
-%             ind_o=find(DT(:,round(w))==max(DT(:,round(w))) );
-%             ind_o=median(ind_o);
-%             [y_ x_]=ind2sub(size(DT),ind_o);
-%             
-%             ellipse_level=[ellipse_level ; a b round(w) y_];
-%             
-%         end
-%     else
-%         ind2=min(ind2);
-%         
-%         if(ind2==2)
-%             a=abs(local_max_ind(i)-local_min_ind(ind2-1));
-%         elseif(ind2==size(local_min_ind,1))
-%             a=abs(local_max_ind(i)-local_min_ind(ind2));
-%         else
-%             d1=abs(local_max_ind(i)-local_min_ind(ind2));
-%             d2=abs(local_max_ind(i)-local_min_ind(ind2-1));
-%             a=min(d1,d2);
-%         end
-%         
-%         b=max(DT(:,round(local_max_ind(i))));
-%         ind_o=find(DT(:,round(w))==max(DT(:,round(w))) );
-%         ind_o=median(ind_o);
-%         [y_ x_]=ind2sub(size(DT),ind_o);
-%         
-%         ellipse_level=[ellipse_level ; a b round(w) y_];
-%         
-%         
-%     end
 end
 
 
@@ -158,7 +119,7 @@ for i=1:1:size(local_min_ind,1)-1
     if(size(ind,1)==0)
         for w=local_min_ind(i):5:local_min_ind(i+1)
             b=max(DT(:, round(w)));
-            a=2;
+            a=0;
             
             ind_o=find(DT(:,round(w))==max(DT(:,round(w))) );
             ind_o=median(ind_o);
@@ -167,30 +128,7 @@ for i=1:1:size(local_min_ind,1)-1
             ellipse_level=[ellipse_level ; a b round(w) y_];
         end
     end    
-        
-%     else
-%         
-%         for j=1:1:size(ind,2)
-%             
-%             d1=abs(local_max_ind(ind(j))-local_min_ind(i));
-%             d2=abs(local_max_ind(ind(j))-local_min_ind(i+1));
-%             
-%             if(i==1)
-%                 a=d1;
-%             elseif(i+1==size(local_min_ind,1))
-%                 a=d2;
-%             else
-%                 a=min(d1,d2);
-%             end
-%             b=max(DT(:,round(local_max_ind(ind(j)))));
-%             
-%             ind_o=find(DT(:,round(local_max_ind(ind(j))))==max(DT(:,round(local_max_ind(ind(j))))));
-%             ind_o=median(ind_o);
-%             [y_ x_]=ind2sub(size(DT),ind_o);
-%             
-%             ellipse_level=[ellipse_level ; a b round(local_max_ind(ind(j))) y_];
-%         end
-%     end
+
 end
 
 end

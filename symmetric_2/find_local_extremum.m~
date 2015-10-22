@@ -1,7 +1,7 @@
 function [ local_min_ind, local_max_ind, pseudo_local_maxima, pseudo_local_minima] = find_local_extremum( DTy )
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
-hpseudo_local_minima = [];
+pseudo_local_minima = [];
 pseudo_local_maxima = [];
 borders = [find(DTy ~= 0,1,'first'),find(DTy ~= 0,1,'last')];
 
@@ -98,8 +98,9 @@ if(max_value/median_value>8)
             end
         else
             ind_=ind_i;
-            frags=[frags, ind_];
         end
+        
+        frags=[frags, ind_];
         
         q=(2*a_est-absdifdifDTy(ind_))/(ind_i-ind_);
         p=2*a_est-ind_i*q;
@@ -120,8 +121,9 @@ if(max_value/median_value>8)
             end
         else
             ind_=ind_i;
-            frags=[frags, ind_];
         end
+        
+        frags=[frags, ind_];
         
         q=(2*a_est-absdifdifDTy(ind_))/(ind_i-ind_);
         p=2*a_est-ind_i*q;
@@ -147,7 +149,7 @@ if(max_value/median_value>8)
     %------------------------------------------
     %----------check the dirac mu--------------
     %------------------------------------------
-
+    
     
     %---------------------------------------------------------------------
     %-check the picks in second derivative--------------------------------
@@ -157,7 +159,7 @@ if(max_value/median_value>8)
     pseudo_local_maxima=pseudo_local_maxima';
     %     local_min_ind = [local_min_ind; pseudo_local_minima];
     %     local_max_ind = [local_max_ind; pseudo_local_maxima'];
-
+    
     
     %%%tochka peregiba
     
@@ -166,93 +168,140 @@ if(max_value/median_value>8)
     for f=1:size(frags,2)
         
         if (f==1)
-            difdifDTy(1:frags(f),1)=0;
-        elseif(mod(f,2)==0)
-            difdifDTy(frags(f):frags(f+1),1)=0;
+            difdifDTy(1:frags(1,f),1)=0;
+        elseif(mod(f,2)==0 && f~=size(frags,2))
+            difdifDTy(frags(1,f):frags(1,f+1),1)=0;
         elseif(f==size(frags,2))
-            difdifDTy(frags(f):size(frags,2),1)=0;
+            difdifDTy(frags(1,f):size(frags,2),1)=0;
         else
             continue;
         end
     end
-     clear frags f
+    clear frags f
     
+    [xmax,imax,xmin,imin] = extrema((difdifDTy));
     
-    [xmax,imax,xmin,imin] = extrema(smooth(difdifDTy));
-
-    thres=max(xmax)/5;
-    f=find(xmax<thres);
+    thres=max(xmax)/3;
+    f=find(abs(xmax)<thres);
     xmax(f)=[];
     imax(f)=[];
     
-    thres=max(abs(xmin))/5;
+    thres=max(abs(xmin))/3;
     f=find(abs(xmin)<thres);
-    xmin(f)=[]; xmin=abs(xmin);
+    xmin(f)=[]; %xmin=abs(xmin);
     imin(f)=[];
-
+    
+    r=find(xmax<0);
+    imax_neg=imax(r); xmax_neg=abs(xmax(r));
+    imax(r)=[]; xmax(r)=[];
+    imax_pos=imax; xmax_pos=xmax;
+    
+    r=find(xmin>0);
+    imin_pos=imin(r); xmin_pos=xmin(r);
+    imin(r)=[]; xmin(r)=[];
+    imin_neg=imin; xmin_neg=abs(xmin);
+    
+    
     maxi=[xmax' imax'];
     mini=[xmin' imin'];
     
-    imax=sortrows(imax,1);
-    imin=sortrows(imin,1);
+    imax_neg=sort(imax_neg,1);
+    imax_pos=sortrows(imax_pos,1);
+    xmax_neg=sortrows(xmax_neg,1);
+    xmax_pos=sortrows(xmax_pos,1);
     
-    thres1=max(abs(xmin(f))./xmax(ind));
-    thres2=max(abs(xmin(f+1))./xmax(ind));
-        
-    thres=max(thres1,thres2);
-        
-%     
-    for f=1:size(imax,1)-1
-        
-        ind=find(imin>imax(f) & imin<imax(f+1), 1);
-    
-        if(~isempty(ind))
-        
-            thres1=max(xmax(f), max(xmin(ind)));
-            thres2=max(xmax(f+1),max(xmin(ind));
-    
-            
-            ind=find(local_max_ind>imax(f) & local_max_ind<imax(f+1));
-            if(~isempty(ind))
-                local_max_ind(ind,:)=[];
-            end
-            
-            ind=find(pseudo_local_maxima>imax(f) & pseudo_local_maxima<imax(f+1));
-            if(~isempty(ind))
-                pseudo_local_maxima(ind,:)=[];
-            end
-        end    
-        
-    end
-%     
-%     
-    
-    for f=1:size(imin,1)-1
-        
-        ind=find(imax>imin(f) & imax<imin(f+1), 1);
-        
-        if(~isempty(ind))
-            
-            ind=find(local_min_ind>imin(f) & local_min_ind<imin(f+1));
-            if(~isempty(ind))
-                local_min_ind(ind,:)=[];
-            end
-            
-            ind=find(pseudo_local_minima>imin(f) & pseudo_local_minima<imin(f+1));
-            if(~isempty(ind))
-                pseudo_local_minima(ind,:)=[];
-            end
-         end    
-        
-    end
-%     
-%     
+    imin_neg=sortrows(imin_neg,1);
+    imin_pos=sortrows(imin_pos,1);
+    xmin_neg=sortrows(xmin_neg,1);
+    xmin_pos=sortrows(xmin_pos,1);
     
     figure
     plot(difdifDTy),hold on
+    
+    %
+    for f=1:size(imax_pos,1)-1
+        
+        ind=find(imin_neg>imax_pos(f) & imin_neg<imax_pos(f+1));
+        
+        if(size(ind,1)>1)
+            for l=1:size(ind,1)-1
+                ind2=find(imax_neg>imin_neg(l) & imax_neg<imin_neg(l+1));
+                if(isempty(ind2))
+                    ind=[];
+                    break;
+                end
+            end
+        
+        end
+        
+        
+        if(~isempty(ind))
+            
+            thres1=max(xmax_pos(f),  max(xmin_neg(ind)))/min(xmax_pos(f),  max(xmin_neg(ind)));
+            thres2=max(xmax_pos(f+1),max(xmin_neg(ind)))/min(xmax_pos(f+1),max(xmin_neg(ind)));
+            
+            thres=max(thres1,thres2);
+            
+            
+            if(thres<2)
+                
+                ind=find(local_max_ind>imax_pos(f) & local_max_ind<imax_pos(f+1));
+                if(~isempty(ind))
+                    local_max_ind(ind,:)=[];
+                end
+                
+                ind=find(pseudo_local_maxima>imax_pos(f) & pseudo_local_maxima<imax_pos(f+1));
+                if(~isempty(ind))
+                    pseudo_local_maxima(ind,:)=[];
+                end
+            end
+            
+        end
+    end
+    
+    for f=1:size(imin,1)-1
+        
+        ind=find(imax_pos>imin_neg(f) & imax_pos<imin_neg(f+1));
+        
+        if(size(ind,1)>1)
+            for l=1:size(ind,1)-1
+                ind2=find(imin_pos>imax_pos(l) & imin_pos<imax_pos(l+1));
+                if(isempty(ind2))
+                    ind=[];
+                    break;
+                end
+            end
+        
+        end
+        
+        
+        if(~isempty(ind))
+            
+            thres1=max(xmin_neg(f),  max(xmax_pos(ind)))/min(xmin_neg(f),  max(xmax_pos(ind)));
+            thres2=max(xmin_neg(f+1),max(xmax_pos(ind)))/min(xmin_neg(f+1),max(xmax_pos(ind)));
+            
+            thres=max(thres1,thres2);
+%             
+            
+            if(thres<2)
+                ind=find(local_min_ind>imin_neg(f) & local_min_ind<imin_neg(f+1));
+                if(~isempty(ind))
+                    local_min_ind(ind,:)=[];
+                end
+                
+                ind=find(pseudo_local_minima>imin_neg(f) & pseudo_local_minima<imin_neg(f+1));
+                if(~isempty(ind))
+                    pseudo_local_minima(ind,:)=[];
+                end
+            end
+        end
+    end
+    %
+    %
+    
     plot(round(imax),difdifDTy(round(imax)),'r*'), hold on
     plot(round(imin),difdifDTy(round(imin)),'g*'), hold on
-
+    
 end
 
 local_max_ind = sort(local_max_ind);

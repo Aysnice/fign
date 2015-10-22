@@ -33,27 +33,43 @@ clear a c alpha
 % imshow(bw)
 
 [bw_crop, Rot]=crop_with_pca(bw);
-%  bw_crop=bw;
+% bw_crop=bw;
 
 %----------------------------------------------------------
 %-------------DISTANCE TRANSFORM---------------------------
 %----------------------------------------------------------
-% bw_crop=imfill(bw_crop,'holes');
-DT = bwdist(~bw_crop,'euclidean');
-% 
-figure
-subimage(mat2gray(DT)),title('city block')
-hold on, imcontour(DT)
+% % % bw_crop=imfill(bw_crop,'holes');
+% % DT = bwdist(~bw_crop,'euclidean');
+% % % 
+% % % figure
+% % % subimage(mat2gray(DT)),title('city block')
+% % % hold on, imcontour(DT)
+% % 
+% % DT = bwdist(~bw_crop,'cityblock');
+% % DTy=max(DT); %for columns
+% % DTx=max(DT,[],2); %for rows
+%----------------------------------------------------------
+%-------------DISTANCE TRANSFORM---------------------------
+%----------------------------------------------------------
 
-DT = bwdist(~bw_crop,'cityblock');
+%----------------------------------------------------------
+%-------------HISTOGRAM------------------------------------
+%----------------------------------------------------------
 
-DTy=max(DT); %for columns
-DTx=max(DT,[],2); %for rows
+[L,num]=bwlabel(bw_crop,8);
+labels=[];
+if(num>1)
+for i=1:num
+l=size(find(L==i),1);
+labels(i)=l;
+end
+[m,ind]=max(labels);
+L(L~=ind)=0;
+end
 
-% y_axis=1:size(bw_crop,2); %for ploting columns 
-% 
-% difDTy=(diff(smooth(DTy,0.1,'lowess')));%diff(DTy);
-% difdifDTy=(diff(difDTy));
+bw=logical(L);
+DT = sum(bw);
+DTy=DT./2; %for columns
 
 
 
@@ -61,39 +77,13 @@ DTx=max(DT,[],2); %for rows
 %----------------------------------------------------------
 %-------------HISTOGRAM------------------------------------
 %----------------------------------------------------------
-% %
-% [L,num]=bwlabel(bw_crop,8);
-% labels=[];
-% if(num>1)
-% for i=1:num
-% l=size(find(L==i),1);
-% labels(i)=l;
-% end
-% [m,ind]=max(labels);
-% L(L~=ind)=0;
-% end
-% 
-% bw=logical(L);
-% DT = sum(bw);
-% DTy=DT./2; %for columns
-% 
-% DT_new=zeros(size(bw));
-% 
-% for bw_i=1:size(bw,2)
-% y=find(bw(:,bw_i)==1);
-% if(~isempty(y))
-% yup=min(y);
-% ydown=max(y);
-% 
-% y=round((yup+ydown)/2);
-% 
-% DT_new(y,bw_i)=DT(bw_i)/2;
-% end
-% end
-% DT=DT_new;
-%----------------------------------------------------------
-%-------------HISTOGRAM------------------------------------
-%----------------------------------------------------------
+
+
+
+y_axis=1:size(bw_crop,2); %for ploting columns 
+
+difDTy=(diff(smooth(DTy,0.1,'lowess')));%diff(DTy);
+difdifDTy=(diff(difDTy));
 
 %%WATERSHED----------------------
  D = -DT;
@@ -104,10 +94,7 @@ DTx=max(DT,[],2); %for rows
  figure, imshow(rgb,'InitialMagnification','fit')
  title('Watershed transform of D')
 %%-------------------------------
-y_axis=1:size(bw_crop,2); %for ploting columns 
 
-difDTy=(diff(smooth(DTy,0.1,'lowess')));%diff(DTy);
-difdifDTy=(diff(difDTy));
 figure
 plot(abs(difdifDTy)), hold on
 
