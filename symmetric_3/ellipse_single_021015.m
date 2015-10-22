@@ -5,9 +5,9 @@ close all; clear all;
 %----------------------------------------------------------
 a = 1555;
 c = 1551;
-alpha = pi;%3*pi/4; %in degree
+alpha = 0;%3*pi/4; %in degree
 
-% bw=create_ellipse(a,c,alpha);
+bw=create_ellipse(a,c,alpha);
 % bw=imread('C:\Users\aysylu\Desktop\ellipses\circle.TIF');
 % bw=imread('C:\Users\aysylu\Desktop\DATA\binary_batch1\000097B_b.TIF');
 % bw=imread('C:\Users\aysylu\Desktop\DATA\worm_shapes_normalized\vid4_frame3_bw_female.jpg');
@@ -17,11 +17,11 @@ alpha = pi;%3*pi/4; %in degree
 % bw=imread('C:\Users\aysylu\Desktop\DATA\worm_shapes_normalized\vid4_frame8_bw_male.jpg');
 % bw=imread('C:\Users\aysylu\Desktop\DATA\worm_shapes_normalized\vid4_frame9_bw_female.jpg');
 % bw=imread('C:\Users\aysylu\Desktop\DATA\worm_shapes_normalized\vid4_frame9_bw_male2.jpg');
- bw=imread('/home/aysylu/Desktop/images/rs.png');
-% bw=imread('/home/aysylu/Desktop/images/binary_batch1/000061B_b.TIF'); 
+ bw=imread('/home/aysylu/Desktop/images/cur.png');
+% bw=imread('/home/aysylu/Desktop/images/binary_batch1/000096B_b.TIF'); 
 bw=im2bw(bw);
-% figure 
-% imshow(bw)
+figure 
+imshow(bw)
 clear a c alpha
 %----------------------------------------------------------
 %-------------PCA------------------------------------------
@@ -32,58 +32,65 @@ clear a c alpha
 % figure
 % imshow(bw)
 
-[bw_crop, Rot]=crop_with_pca(bw);
-% bw_crop=bw;
+%[bw_crop, Rot]=crop_with_pca(bw);
+  bw_crop=bw;
 
 %----------------------------------------------------------
 %-------------DISTANCE TRANSFORM---------------------------
 %----------------------------------------------------------
-% % % bw_crop=imfill(bw_crop,'holes');
-% % DT = bwdist(~bw_crop,'euclidean');
-% % % 
-% % % figure
-% % % subimage(mat2gray(DT)),title('city block')
-% % % hold on, imcontour(DT)
-% % 
-% % DT = bwdist(~bw_crop,'cityblock');
-% % DTy=max(DT); %for columns
-% % DTx=max(DT,[],2); %for rows
-%----------------------------------------------------------
-%-------------DISTANCE TRANSFORM---------------------------
-%----------------------------------------------------------
+% bw_crop=imfill(bw_crop,'holes');
+DT = bwdist(~bw_crop,'euclidean');
+% 
+figure
+subimage(mat2gray(DT)),title('city block')
+hold on, imcontour(DT)
+
+DT = bwdist(~bw_crop,'cityblock');
+
+DTy=max(DT); %for columns
+DTx=max(DT,[],2); %for rows
+
+% y_axis=1:size(bw_crop,2); %for ploting columns 
+% 
+% difDTy=(diff(smooth(DTy,0.1,'lowess')));%diff(DTy);
+% difdifDTy=(diff(difDTy));
 
 %----------------------------------------------------------
 %-------------HISTOGRAM------------------------------------
 %----------------------------------------------------------
-
-[L,num]=bwlabel(bw_crop,8);
-labels=[];
-if(num>1)
-for i=1:num
-l=size(find(L==i),1);
-labels(i)=l;
-end
-[m,ind]=max(labels);
-L(L~=ind)=0;
-end
-
-bw=logical(L);
-DT = sum(bw);
-DTy=DT./2; %for columns
-
-
-
-
+% %
+% [L,num]=bwlabel(bw_crop,8);
+% labels=[];
+% if(num>1)
+% for i=1:num
+% l=size(find(L==i),1);
+% labels(i)=l;
+% end
+% [m,ind]=max(labels);
+% L(L~=ind)=0;
+% end
+% 
+% bw=logical(L);
+% DT = sum(bw);
+% DTy=DT./2; %for columns
+% 
+% DT_new=zeros(size(bw));
+% 
+% for bw_i=1:size(bw,2)
+% y=find(bw(:,bw_i)==1);
+% if(~isempty(y))
+% yup=min(y);
+% ydown=max(y);
+% 
+% y=round((yup+ydown)/2);
+% 
+% DT_new(y,bw_i)=DT(bw_i)/2;
+% end
+% end
+% DT=DT_new;
 %----------------------------------------------------------
 %-------------HISTOGRAM------------------------------------
 %----------------------------------------------------------
-
-
-
-y_axis=1:size(bw_crop,2); %for ploting columns 
-
-difDTy=(diff(smooth(DTy,0.1,'lowess')));%diff(DTy);
-difdifDTy=(diff(difDTy));
 
 %%WATERSHED----------------------
  D = -DT;
@@ -94,7 +101,10 @@ difdifDTy=(diff(difDTy));
  figure, imshow(rgb,'InitialMagnification','fit')
  title('Watershed transform of D')
 %%-------------------------------
+y_axis=1:size(bw_crop,2); %for ploting columns 
 
+difDTy=(diff(smooth(DTy,0.3,'lowess')));%diff(DTy);
+difdifDTy=(diff(difDTy));
 figure
 plot(abs(difdifDTy)), hold on
 
@@ -168,10 +178,6 @@ ylabel('second derivative of DT')
 % plot(y_axis_rrrr,rrrr),
 % axis equal
 
-
-
-
-
 %----------------------------------------------------------
 %-------------SILHOUETTE CENTRE COORDINATES----------------
 %----------------------------------------------------------
@@ -200,9 +206,13 @@ local_max_ind = [local_max_ind; pseudo_local_maxima];
 local_max_ind = sort(local_max_ind);
 local_min_ind = sort(local_min_ind);
 
+figure
+imshow(bw_crop), hold on
 ellipse_level_2=compute_covering_ellipses( local_max_ind,local_min_ind, DT );
 ellipse_level_2=no_enclosure(ellipse_level_2);
-ellipse_level_2=finish_representation(ellipse_level_2,DT);
+ellipse_level_2b=finish_representation(ellipse_level_2,DT);
+plot_ellipse_level(bw_crop, ellipse_level_2b, O_e, 'b', 2);
+plot_ellipse_level(bw_crop, ellipse_level_2, O_e, [0 0.5 0], 3);
 
 % ellipse_level_0 = optimize_level( ellipse_level_0,bw_crop);
 % ellipse_level_1 = optimize_level( ellipse_level_1,bw_crop);

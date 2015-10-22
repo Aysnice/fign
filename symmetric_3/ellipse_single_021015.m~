@@ -17,7 +17,7 @@ alpha = pi;%3*pi/4; %in degree
 % bw=imread('C:\Users\aysylu\Desktop\DATA\worm_shapes_normalized\vid4_frame8_bw_male.jpg');
 % bw=imread('C:\Users\aysylu\Desktop\DATA\worm_shapes_normalized\vid4_frame9_bw_female.jpg');
 % bw=imread('C:\Users\aysylu\Desktop\DATA\worm_shapes_normalized\vid4_frame9_bw_male2.jpg');
- bw=imread('/home/aysylu/Desktop/images/rs.png');
+ bw=imread('/home/aysylu/Desktop/images/blumnot.png');
 % bw=imread('/home/aysylu/Desktop/images/binary_batch1/000061B_b.TIF'); 
 bw=im2bw(bw);
 % figure 
@@ -178,10 +178,6 @@ ylabel('second derivative of DT')
 % plot(y_axis_rrrr,rrrr),
 % axis equal
 
-
-
-
-
 %----------------------------------------------------------
 %-------------SILHOUETTE CENTRE COORDINATES----------------
 %----------------------------------------------------------
@@ -210,9 +206,13 @@ local_max_ind = [local_max_ind; pseudo_local_maxima];
 local_max_ind = sort(local_max_ind);
 local_min_ind = sort(local_min_ind);
 
+figure
+imshow(bw_crop), hold on
 ellipse_level_2=compute_covering_ellipses( local_max_ind,local_min_ind, DT );
 ellipse_level_2=no_enclosure(ellipse_level_2);
-ellipse_level_2=finish_representation(ellipse_level_2,DT);
+ellipse_level_2b=finish_representation(ellipse_level_2,DT);
+plot_ellipse_level(bw_crop, ellipse_level_2b, O_e, 'b', 2);
+plot_ellipse_level(bw_crop, ellipse_level_2, O_e, [], 2);
 
 % ellipse_level_0 = optimize_level( ellipse_level_0,bw_crop);
 % ellipse_level_1 = optimize_level( ellipse_level_1,bw_crop);

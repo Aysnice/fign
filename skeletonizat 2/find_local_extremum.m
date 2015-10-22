@@ -6,8 +6,7 @@ pseudo_local_maxima = [];
 borders = [find(DTy ~= 0,1,'first'),find(DTy ~= 0,1,'last')];
 
 dim=1;
-% difDTy=diff(DTy)';
-difDTy=(diff(smooth(DTy,0.1,'lowess')));
+difDTy=(diff(smooth(DTy,0.2,'lowess')));
 temp = diff(sign(difDTy),1,dim);
 
 %  0 if signs were the same
@@ -76,6 +75,9 @@ if(max_value/median_value>8)
     %------------------------------------------
     %----------check the dirac mu--------------
     %------------------------------------------
+    figure
+    plot(difDTy), hold on
+    
     frags=[];
     delete_flag=[];
     for i=1:1:size(pseudo_local_maxima,2)
@@ -163,30 +165,32 @@ if(max_value/median_value>8)
     
     %%%tochka peregiba
     
-    difdifDTy=diff(difDTy);
+    figure
+    plot((difdifDTy)), hold on
     
-    for f=1:size(frags,2)
-        
-        if (f==1)
-            difdifDTy(1:frags(1,f),1)=0;
-        elseif(mod(f,2)==0 && f~=size(frags,2))
-            difdifDTy(frags(1,f):frags(1,f+1),1)=0;
-        elseif(f==size(frags,2))
-            difdifDTy(frags(1,f):size(frags,2),1)=0;
-        else
-            continue;
-        end
-    end
-    clear frags f
     
+    %     for f=1:size(frags,2)
+    %
+    %         if (f==1)
+    %             difdifDTy(1:frags(1,f),1)=0;
+    %         elseif(mod(f,2)==0 && f~=size(frags,2))
+    %             difdifDTy(frags(1,f):frags(1,f+1),1)=0;
+    %         elseif(f==size(frags,2))
+    %             difdifDTy(frags(1,f):size(frags,2),1)=0;
+    %         else
+    %             continue;
+    %         end
+    %     end
+    %     clear frags f
+    %
     [xmax,imax,xmin,imin] = extrema((difdifDTy));
     
-    thres=max(xmax)/3;
+    thres=max(xmax)/10;
     f=find(abs(xmax)<thres);
     xmax(f)=[];
     imax(f)=[];
     
-    thres=max(abs(xmin))/3;
+    thres=max(abs(xmin))/10;
     f=find(abs(xmin)<thres);
     xmin(f)=[]; %xmin=abs(xmin);
     imin(f)=[];
@@ -201,19 +205,33 @@ if(max_value/median_value>8)
     imin(r)=[]; xmin(r)=[];
     imin_neg=imin; xmin_neg=abs(xmin);
     
+    if(~isempty(imax_pos))
+        maxi=[imax_pos xmax_pos];
+        maxi=sortrows(maxi,1);
+        imax_pos=maxi(:,1);
+        xmax_pos=maxi(:,2);
+    end
     
-    maxi=[xmax' imax'];
-    mini=[xmin' imin'];
+    if(~isempty(imax_neg))
+        maxi=[imax_neg xmax_neg];
+        maxi=sortrows(maxi,1);
+        imax_neg=maxi(:,1);
+        xmax_neg=maxi(:,2);
+    end
     
-    imax_neg=sort(imax_neg,1);
-    imax_pos=sortrows(imax_pos,1);
-    xmax_neg=sortrows(xmax_neg,1);
-    xmax_pos=sortrows(xmax_pos,1);
+    if(~isempty(imin_pos))
+        mini=[imin_pos xmin_pos];
+        mini=sortrows(mini,1);
+        imin_pos=mini(:,1);
+        xmin_pos=mini(:,2);
+    end
     
-    imin_neg=sortrows(imin_neg,1);
-    imin_pos=sortrows(imin_pos,1);
-    xmin_neg=sortrows(xmin_neg,1);
-    xmin_pos=sortrows(xmin_pos,1);
+    if(~isempty(imin_neg))
+        mini=[imin_neg xmin_neg];
+        mini=sortrows(mini,1);
+        imin_neg=mini(:,1);
+        xmin_neg=mini(:,2);
+    end
     
     figure
     plot(difdifDTy),hold on
@@ -231,7 +249,7 @@ if(max_value/median_value>8)
                     break;
                 end
             end
-        
+            
         end
         
         
@@ -271,7 +289,7 @@ if(max_value/median_value>8)
                     break;
                 end
             end
-        
+            
         end
         
         
@@ -281,7 +299,7 @@ if(max_value/median_value>8)
             thres2=max(xmin_neg(f+1),max(xmax_pos(ind)))/min(xmin_neg(f+1),max(xmax_pos(ind)));
             
             thres=max(thres1,thres2);
-%             
+            %
             
             if(thres<2)
                 ind=find(local_min_ind>imin_neg(f) & local_min_ind<imin_neg(f+1));
@@ -299,8 +317,8 @@ if(max_value/median_value>8)
     %
     %
     
-    plot(round(imax),difdifDTy(round(imax)),'r*'), hold on
-    plot(round(imin),difdifDTy(round(imin)),'g*'), hold on
+    plot(round(imax_pos),difdifDTy(round(imax_pos)),'r*'), hold on
+    plot(round(imin_neg),difdifDTy(round(imin_neg)),'g*'), hold on
     
 end
 
