@@ -3,6 +3,7 @@ function [ ] = plot_ellipse_level(bw, ellipse_level, O_e, Color, lw)
 %   Detailed explanation goes here
 % figure
 % imshow(bw),title('Euclidean'), hold on
+% imshow(bw_crop),hold on
 
 
 for i=1:1:size(ellipse_level,1)
@@ -23,7 +24,7 @@ for i=1:1:size(ellipse_level,1)
     
     [X,Y] = compute_ellipse(a_pred,b_pred,O2);%, Rot);
     plot(X,Y,'Color',Color,'LineWidth',lw), hold on
-%     plot([f1x,f2x],[f1y,f2y],'*r'),hold on 
+    plot([f1x,f2x],[f1y,f2y],'*r'),hold on 
     %plot(f2x,f2y,'w*'),hold on 
   
 end

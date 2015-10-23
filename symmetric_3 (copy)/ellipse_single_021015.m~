@@ -18,7 +18,7 @@ bw=create_ellipse(a,c,alpha);
 % bw=imread('C:\Users\aysylu\Desktop\DATA\worm_shapes_normalized\vid4_frame9_bw_female.jpg');
 % bw=imread('C:\Users\aysylu\Desktop\DATA\worm_shapes_normalized\vid4_frame9_bw_male2.jpg');
 %  bw=imread('/home/aysylu/Desktop/images/cur.png');
-bw=imread('/home/aysylu/Desktop/images/binary_batch1/000061B_b.TIF'); 
+bw=imread('/home/aysylu/Desktop/images/binary_batch1/000071B_b.TIF'); 
 bw=im2bw(bw);
 figure 
 imshow(bw)
@@ -32,8 +32,8 @@ clear a c alpha
 % figure
 % imshow(bw)
 
-[bw_crop, Rot]=crop_with_pca(bw);
-%   bw_crop=bw;
+%[bw_crop, Rot]=crop_with_pca(bw);
+  bw_crop=bw;
 
 %----------------------------------------------------------
 %-------------DISTANCE TRANSFORM---------------------------
@@ -197,8 +197,6 @@ ellipse_level_0=[a b O_e(1) O_e(2)];
 
 % level 1 - only extrema
 ellipse_level_1=compute_covering_ellipses( local_max_ind,local_min_ind, DT );
-ind=find(ellipse_level_1(:,1)==Inf);
-ellipse_level_1(ind,:)=[];
 ellipse_level_1=no_enclosure(ellipse_level_1);
 
 % level 2 - extrema + pseudo
@@ -211,8 +209,6 @@ local_min_ind = sort(local_min_ind);
 figure
 imshow(bw_crop), hold on
 ellipse_level_2=compute_covering_ellipses( local_max_ind,local_min_ind, DT );
-ind=find(ellipse_level_1(:,2)==Inf);
-ellipse_level_2(ind,:)=[];
 ellipse_level_2=no_enclosure(ellipse_level_2);
 ellipse_level_2b=finish_representation(ellipse_level_2,DT);
 plot_ellipse_level(bw_crop, ellipse_level_2b, O_e, 'b', 2);
