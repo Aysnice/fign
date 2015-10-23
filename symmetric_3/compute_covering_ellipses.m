@@ -80,29 +80,70 @@ for i=1:1:size(local_max_ind,1)
         if (i==1 && i==numel(local_max_ind))
             ind_before=max(ind_before);
             ind_after=min(ind_after);
+            b=max(DT(:,local_max_ind(i)))
             
-            d1=abs(local_max_ind(i)-local_min_ind(ind_before));
-            d2=abs(local_max_ind(i)-local_min_ind(ind_after));
+            x0=local_max_ind(i);
+            x1=local_min_ind(ind_before);
+            y1=max(DT(:,local_min_ind(ind_before)));
             
-            a=min(d1,d2);
-        
+            a1=sqrt( (x1-x0)^2/(1-(y1/b)^2));
+            
+            x2=local_min_ind(ind_after);
+            y2=max(DT(:,local_min_ind(ind_after)));
+            
+            a2=sqrt( (x2-x0)^2/(1-(y2/b)^2));
+            
+            a=min(a1,a2);
+            
         elseif (i==1)
             ind_before=max(ind_before);
-            d1=abs(local_max_ind(i)-local_min_ind(ind_before));
-            a=d1;
+%             d1=abs(local_max_ind(i)-local_min_ind(ind_before));
+%             a=d1;
+            
+            b=max(DT(:,local_max_ind(i)))
+            
+            x0=local_max_ind(i);
+            x1=local_min_ind(ind_before);
+            y1=max(DT(:,local_min_ind(ind_before)));
+            
+            a=sqrt( (x1-x0)^2/(1-(y1/b)^2));
             
         elseif (i==numel(local_max_ind))
             ind_after=min(ind_after);
-            d2=abs(local_max_ind(i)-local_min_ind(ind_after));
-            a=d2;
+%             d2=abs(local_max_ind(i)-local_min_ind(ind_after));
+%             a=d2;
+            b=max(DT(:,local_max_ind(i)))
+            
+            x0=local_max_ind(i);
+            x2=local_min_ind(ind_after);
+            y2=max(DT(:,local_min_ind(ind_after)));
+            
+            a=sqrt( (x2-x0)^2/(1-(y2/b)^2));
+            
         else
-            ind_before=max(ind_before);
-            ind_after=min(ind_after);
+            %             ind_before=max(ind_before);
+            %             ind_after=min(ind_after);
+            %
+            %             d1=abs(local_max_ind(i)-local_min_ind(ind_before));
+            %             d2=abs(local_max_ind(i)-local_min_ind(ind_after));
+            %
+            %             a=min(d1,d2);
             
-            d1=abs(local_max_ind(i)-local_min_ind(ind_before));
-            d2=abs(local_max_ind(i)-local_min_ind(ind_after));
+            b=max(DT(:,local_max_ind(i)))
             
-            a=min(d1,d2);
+            x0=local_max_ind(i);
+            x1=local_min_ind(ind_before);
+            y1=max(DT(:,local_min_ind(ind_before)));
+            
+            a1=sqrt( (x1-x0)^2/(1-(y1/b)^2));
+            
+            x2=local_min_ind(ind_after);
+            y2=max(DT(:,local_min_ind(ind_after)));
+            
+            a2=sqrt( (x2-x0)^2/(1-(y2/b)^2));
+            
+            a=min(a1,a2);
+            
         end
         
         b=max(DT(:,round(local_max_ind(i))));
@@ -116,13 +157,31 @@ for i=1:1:size(local_max_ind,1)
     elseif(isempty(ind_after) && ~isempty(ind_before))
         if (i==1)
             ind_before=max(ind_before);
-            d1=abs(local_max_ind(i)-local_min_ind(ind_before));
-            a=d1;
+%             d1=abs(local_max_ind(i)-local_min_ind(ind_before));
+%             a=d1;
+            b=max(DT(:,local_max_ind(i)))
+            
+            x0=local_max_ind(i);
+            x1=local_min_ind(ind_before);
+            y1=max(DT(:,local_min_ind(ind_before)));
+            
+            a=sqrt( (x1-x0)^2/(1-(y1/b)^2));
             
         else
             ind_before=max(ind_before);
-            a=abs(local_max_ind(i)-local_min_ind(ind_before));
+            %a=abs(local_max_ind(i)-local_min_ind(ind_before));
+            b=max(DT(:,local_max_ind(i)))
+            
+            x0=local_max_ind(i);
+            
+            
+            x2=local_min_ind(ind_after);
+            y2=max(DT(:,local_min_ind(ind_after)));
+            
+            a=sqrt( (x2-x0)^2/(1-(y2/b)^2));
+            
         end
+        
         b=max(DT(:,round(local_max_ind(i))));
         ind_o=find(DT(:,round(local_max_ind(i)))==max(DT(:,round(local_max_ind(i)))) );
         ind_o=median(ind_o);

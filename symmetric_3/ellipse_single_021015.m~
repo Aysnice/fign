@@ -5,9 +5,9 @@ close all; clear all;
 %----------------------------------------------------------
 a = 1555;
 c = 1551;
-alpha = pi;%3*pi/4; %in degree
+alpha = 0;%3*pi/4; %in degree
 
-% bw=create_ellipse(a,c,alpha);
+bw=create_ellipse(a,c,alpha);
 % bw=imread('C:\Users\aysylu\Desktop\ellipses\circle.TIF');
 % bw=imread('C:\Users\aysylu\Desktop\DATA\binary_batch1\000097B_b.TIF');
 % bw=imread('C:\Users\aysylu\Desktop\DATA\worm_shapes_normalized\vid4_frame3_bw_female.jpg');
@@ -17,11 +17,11 @@ alpha = pi;%3*pi/4; %in degree
 % bw=imread('C:\Users\aysylu\Desktop\DATA\worm_shapes_normalized\vid4_frame8_bw_male.jpg');
 % bw=imread('C:\Users\aysylu\Desktop\DATA\worm_shapes_normalized\vid4_frame9_bw_female.jpg');
 % bw=imread('C:\Users\aysylu\Desktop\DATA\worm_shapes_normalized\vid4_frame9_bw_male2.jpg');
- bw=imread('/home/aysylu/Desktop/images/blumnot.png');
-% bw=imread('/home/aysylu/Desktop/images/binary_batch1/000061B_b.TIF'); 
+%  bw=imread('/home/aysylu/Desktop/images/cur.png');
+bw=imread('/home/aysylu/Desktop/images/binary_batch1/000071B_b.TIF'); 
 bw=im2bw(bw);
-% figure 
-% imshow(bw)
+figure 
+imshow(bw)
 clear a c alpha
 %----------------------------------------------------------
 %-------------PCA------------------------------------------
@@ -32,8 +32,8 @@ clear a c alpha
 % figure
 % imshow(bw)
 
-[bw_crop, Rot]=crop_with_pca(bw);
-%  bw_crop=bw;
+%[bw_crop, Rot]=crop_with_pca(bw);
+  bw_crop=bw;
 
 %----------------------------------------------------------
 %-------------DISTANCE TRANSFORM---------------------------
@@ -212,7 +212,7 @@ ellipse_level_2=compute_covering_ellipses( local_max_ind,local_min_ind, DT );
 ellipse_level_2=no_enclosure(ellipse_level_2);
 ellipse_level_2b=finish_representation(ellipse_level_2,DT);
 plot_ellipse_level(bw_crop, ellipse_level_2b, O_e, 'b', 2);
-plot_ellipse_level(bw_crop, ellipse_level_2, O_e, [], 2);
+plot_ellipse_level(bw_crop, ellipse_level_2, O_e, [0 0.5 0], 3);
 
 % ellipse_level_0 = optimize_level( ellipse_level_0,bw_crop);
 % ellipse_level_1 = optimize_level( ellipse_level_1,bw_crop);

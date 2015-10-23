@@ -17,8 +17,8 @@ bw=create_ellipse(a,c,alpha);
 % bw=imread('C:\Users\aysylu\Desktop\DATA\worm_shapes_normalized\vid4_frame8_bw_male.jpg');
 % bw=imread('C:\Users\aysylu\Desktop\DATA\worm_shapes_normalized\vid4_frame9_bw_female.jpg');
 % bw=imread('C:\Users\aysylu\Desktop\DATA\worm_shapes_normalized\vid4_frame9_bw_male2.jpg');
- bw=imread('/home/aysylu/Desktop/images/cur.png');
-% bw=imread('/home/aysylu/Desktop/images/binary_batch1/000096B_b.TIF'); 
+%  bw=imread('/home/aysylu/Desktop/images/cur.png');
+bw=imread('/home/aysylu/Desktop/images/binary_batch1/000071B_b.TIF'); 
 bw=im2bw(bw);
 figure 
 imshow(bw)
@@ -32,8 +32,8 @@ clear a c alpha
 % figure
 % imshow(bw)
 
-%[bw_crop, Rot]=crop_with_pca(bw);
-  bw_crop=bw;
+[bw_crop, Rot]=crop_with_pca(bw);
+%   bw_crop=bw;
 
 %----------------------------------------------------------
 %-------------DISTANCE TRANSFORM---------------------------
@@ -103,7 +103,7 @@ DTx=max(DT,[],2); %for rows
 %%-------------------------------
 y_axis=1:size(bw_crop,2); %for ploting columns 
 
-difDTy=(diff(smooth(DTy,0.3,'lowess')));%diff(DTy);
+difDTy=(diff(smooth(DTy,0.1,'lowess')));%diff(DTy);
 difdifDTy=(diff(difDTy));
 figure
 plot(abs(difdifDTy)), hold on
